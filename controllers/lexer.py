@@ -1,5 +1,6 @@
 from sly import Lexer
 
+
 class BcLexer(Lexer):
     tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
                LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
@@ -30,6 +31,10 @@ class BcLexer(Lexer):
             token.value = int(token.value)
         else:
             token.value = float(token.value)
+        return token
+
+    def ID(self, token):
+        token.value = token.value.upper()
         return token
 
     def error(self, token):
