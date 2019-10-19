@@ -12,7 +12,7 @@ class BcParser(Parser):
         ('left', MINUS, ADD),
         ('left', TIMES, DIVIDE, INTDIV, MODULO),
         ('left', POWER),
-        ('right', UMINUS)
+        ('right', UMINUS),
     )
 
     def __init__(self):
@@ -30,6 +30,15 @@ class BcParser(Parser):
         """
         self.variables = {}
         self.functions = {}
+
+    @_('ID ASSIGN QMARK')
+    def statement(self, parsed):
+        print(self.variables[parsed.ID])
+
+    @_('ID ASSIGN expr')
+    def statement(self, parsed):
+        self.variables[parsed.ID] = parsed.expr
+        return parsed.expr
 
     #uncompress paren / brackets for expr
     @_('LPAREN expr RPAREN',
@@ -79,3 +88,10 @@ class BcParser(Parser):
     @_('IMAG')
     def expr(self, parsed):
         return Complex(0, 1)
+
+    # calling ID (var/func)
+    @_('ID')
+    def expr(self, parsed):
+        if parsed.ID in self.variables:
+            return self.variables[parsed.ID]
+        return 0
