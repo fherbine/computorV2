@@ -23,7 +23,7 @@ Todos:
 ------
 
 **MANDATORY**
-- [ ] Lexer
+- [x] Lexer
 - [ ] Parser
 - [ ] Math lib
 - [ ] Documentation
@@ -38,4 +38,5 @@ Todos:
 - [ ] History of commands w/results
 - [ ] Matrix inversion
 - [ ] An extension of the matrix computation applied to vector computation
+- [x] Integer divs
 - [ ] Others (cmds: quit, help, stored vars, ...)

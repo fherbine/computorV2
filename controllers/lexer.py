@@ -3,13 +3,14 @@ from sly import Lexer
 class BcLexer(Lexer):
     tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
                LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
-               COMA, NUMBER }
+               COMA, NUMBER, POWER, INTDIV }
 
     ignore = ' \t'
 
     ADD = r'\+'
     MINUS = r'-'
     TIMES = r'\*'
+    INTDIV = r'//'
     DIVIDE = r'/'
     ASSIGN = r'='
     IMAG = r'[iI]'
@@ -22,6 +23,7 @@ class BcLexer(Lexer):
     QMARK = '\?'
     COMA = r','
     NUMBER = r'(?:[0-9]*\.)?[0-9]+'
+    POWER = r'\^'
 
     def NUMBER(self, token):
         if float(token.value).is_integer():
