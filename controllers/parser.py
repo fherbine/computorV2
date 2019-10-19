@@ -31,6 +31,12 @@ class BcParser(Parser):
         self.variables = {}
         self.functions = {}
 
+    #uncompress paren / brackets for expr
+    @_('LPAREN expr RPAREN',
+       'LBRCK expr RBRCK')
+    def expr(self, parsed):
+        return parsed.expr
+
     # regular expr operations
     @_('expr ADD expr')
     def expr(self, parsed):
