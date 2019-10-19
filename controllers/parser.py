@@ -8,6 +8,13 @@ sanitize_result = lambda a: int(a) if float(a).is_integer() else float(a)
 class BcParser(Parser):
     tokens = BcLexer.tokens
 
+    precedence = (
+        ('left', MINUS, ADD),
+        ('left', TIMES, DIVIDE, INTDIV, MODULO),
+        ('left', POWER),
+        ('right', UMINUS)
+    )
+
     def __init__(self):
         """Define functions and variables dicts.
 
@@ -52,6 +59,11 @@ class BcParser(Parser):
     @_('expr POWER expr')
     def expr(self, parsed):
         return ft_power(parsed.expr0, parsed.expr1)
+
+    #UMINUS > Very high precedence
+    @_('MINUS expr %prec UMINUS')
+    def expr(self, parsed):
+        return -parsed.expr
 
     # regular expr
     @_('NUMBER')
