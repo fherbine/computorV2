@@ -40,6 +40,11 @@ class BcParser(Parser):
         self.variables[parsed.ID] = parsed.expr
         return parsed.expr
 
+    # getting func arg
+    @_('ID LPAREN ID RPAREN')
+    def function(self, parsed):
+        return 'func %s' % parsed[2]
+
     #uncompress paren / brackets for expr
     @_('LPAREN expr RPAREN',
        'LBRCK expr RBRCK')
