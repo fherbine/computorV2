@@ -126,3 +126,74 @@ class Complex:
                 'Cannot divide complex numbers between them.'
             )
         return Complex(self.r / number, self.i / number)
+
+class Matrix:
+    def __init__(self, value):
+        """Supposed that value is a 2d list of numbers."""
+        self.dimension = (0, 0)
+        self.matrix = value
+
+    @property
+    def matrix(self):
+        return self._matrix
+
+    @matrix.setter
+    def matrix(self, value):
+        y = len(value)
+        x = len(value[0])
+
+        for elem in value:
+            mx = len(elem)
+
+            if mx != x:
+                raise ValueError(
+                    'Incorrect Matrix: all lines should have the same lenght.'
+                )
+
+        self.dimension = (x, y)
+        self._matrix = value
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return '\n'.join(map(str, self.matrix))
+
+    def __getitem__(self, key):
+        return self.matrix[key]
+
+    def __setitem__(self, key, value):
+        self.matrix[key] = value
+
+    def _do_matrix_operation(self, elem, operation):
+        final_matrix = []
+
+        if isinstance(elem, Matrix):
+            if elem.dimension != self.dimension:
+                raise ValueError('Both Matrix should have the same dimension.')
+
+            for line_m1, line_m2 in zip(self.matrix, elem.matrix):
+                final_matrix.append(list())
+
+                for a, b in zip(line_m1, line_m2):
+                    result = getattr(operator, operation)(a, b)
+                    final_matrix[-1].append(result)
+        else:
+            for line in self.matrix:
+                final_matrix.append(list())
+
+                for a in line:
+                    result = getattr(operator, operation)(a, elem)
+        return final_matrix
+
+    def __add__(self, elem):
+        return self._do_matrix_operation(elem, 'add')
+
+    def __sub__(self, elem):
+        return self._do_matrix_operation(elem, 'sub')
+
+    def __mul__(self, elem):
+        return self._do_matrix_operation(elem, 'mul')
+
+    def __truediv__(self, elem):
+        return self._do_matrix_operation(elem, 'truediv')
