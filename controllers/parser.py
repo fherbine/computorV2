@@ -51,6 +51,34 @@ class BcParser(Parser):
     def expr(self, parsed):
         return parsed.expr
 
+    #matrix handling
+    @_('LBRCK matrix_group RBRCK')
+    def expr(self, parsed):
+        return Matrix(parsed.matrix_group)
+
+    @_('matrix_group SEMICOLON matrix')
+    def matrix_group(self, parsed):
+        matrix_group = parsed.matrix_group
+        matrix = parsed.matrix
+        matrix_group.append(matrix)
+        return matrix_group
+
+    @_('matrix')
+    def matrix_group(self, parsed):
+        return [parsed.matrix]
+
+    @_('LBRCK matrix_elem RBRCK')
+    def matrix(self, parsed):
+        return parsed.matrix_elem
+
+    @_('matrix_elem COMMA expr')
+    def matrix_elem(self, parsed):
+        return parsed.matrix_elem + expr
+
+    @_('expr COMMA expr')
+    def matrix_elem(self, parsed):
+        return [parsed.expr0] + [parsed.expr1]
+
     # regular expr operations
     @_('expr ADD expr')
     def expr(self, parsed):
