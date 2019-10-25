@@ -9,12 +9,17 @@ Contained objects are:
 - Complex(r, i): Represents a coplex number.
 """
 
+from controllers.utils import MagicStr
+
 def ft_abs(n):
     return -n if n < 0 else n
 
 
 def ft_power(n, p):
     total = 1
+
+    if isinstance(n, MagicStr) or isinstance(p, MagicStr):
+        return(MagicStr(f'{n}^{p}'))
 
     for _ in range(p):
         total *= n
