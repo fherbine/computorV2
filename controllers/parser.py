@@ -2,20 +2,51 @@ from sly import Parser
 
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
+from controllers.utils import MagicStr
+
 
 sanitize_result = lambda a: int(a) if float(a).is_integer() else float(a)
+
+class Function:
+    def __init__(self, name, args, body):
+        self.name = name
+        self.args = args
+        self._body = body
+
+    def call(self, args):
+        lexer = BcLexer()
+        parser = BcParser(True)
+
+        variables = {str(name): value for name, value in zip(self.args, args)}
+        parser.variables = variables
+
+        return parser.parse(lexer.tokenize(str(self.body)))
+
+
+    @property
+    def body(self):
+        return self._body
+
+    @body.setter
+    def body(self, value):
+        if isinstance(value, str) and not value:
+            raise ValueError('Function\'s body is empty.')
+
+        self._body = value
+
 
 class BcParser(Parser):
     tokens = BcLexer.tokens
 
     precedence = (
+        ('left', QMARK),
         ('left', MINUS, ADD),
         ('left', TIMES, DIVIDE, INTDIV, MODULO),
         ('left', POWER),
         ('right', UMINUS),
     )
 
-    def __init__(self):
+    def __init__(self, is_function_body=False):
         """Define functions and variables dicts.
 
         self.variables struct:
@@ -23,27 +54,60 @@ class BcParser(Parser):
 
         self.functions struct:
         {
-            <FUNC1_CAP>: BcFunc(),
-            <FUNC2_CAP>: BcFunc(),
+            <FUNC1_CAP>: Function(),
+            <FUNC2_CAP>: Function(),
             ...
         }
         """
         self.variables = {}
         self.functions = {}
+        self.is_function_body = is_function_body
 
-    @_('ID ASSIGN QMARK')
+    @_('assignement',
+       'get_statement')
     def statement(self, parsed):
-        print(self.variables[parsed.ID])
+        return parsed[0]
 
-    @_('ID ASSIGN expr')
-    def statement(self, parsed):
-        self.variables[parsed.ID] = parsed.expr
+    @_('expr ASSIGN QMARK')
+    def get_statement(self, parsed):
+        if (
+            isinstance(parsed.expr, MagicStr)
+            or isinstance(parsed.expr, Function)
+        ):
+            raise NameError('Cannot call `%s`.' % parsed.expr)
+
         return parsed.expr
 
-    # getting func arg
-    @_('ID LPAREN ID RPAREN')
-    def function(self, parsed):
-        return 'func %s' % parsed[2]
+    @_('expr')
+    def statement(self, parsed):
+        if self.is_function_body:
+            return parsed.expr
+
+    @_('expr ASSIGN expr')
+    def assignement(self, parsed):
+        if isinstance(parsed[0], Function):
+            #assign function
+            func = parsed[0]
+            func.body = parsed[2]
+            self.functions[func.name] = func
+            return func.body
+        elif isinstance(parsed[0], MagicStr):
+            #assign variable
+            self.variables[parsed[0]] = parsed[2]
+            return parsed[2]
+
+        raise SyntaxError(f'Cannot assign {parsed[2]} to {parsed[0]}')
+
+    # function calls
+    @_('ID LPAREN expr RPAREN')
+    def expr(self, parsed):
+        if parsed[0] in self.functions:
+            #Function already exists
+            return self.functions[parsed[0]].call([parsed[2]])
+        else:
+            #Create a new function
+            return Function(parsed[0], [parsed[2]], '')
+
 
     #uncompress paren / brackets for expr
     @_('LPAREN expr RPAREN',
@@ -127,4 +191,4 @@ class BcParser(Parser):
     def expr(self, parsed):
         if parsed.ID in self.variables:
             return self.variables[parsed.ID]
-        return 0
+        return MagicStr(parsed.ID)
