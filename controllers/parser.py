@@ -5,7 +5,10 @@ from controllers.ft_math import *
 from controllers.utils import MagicStr
 
 
-sanitize_result = lambda a: int(a) if float(a).is_integer() else float(a)
+def sanitize_result(expr):
+    if isinstance(expr, float) or isinstance(expr, int):
+        return int(expr) if float(expr).is_integer() else float(expr)
+    return expr
 
 class Function:
     def __init__(self, name, args, body):
