@@ -51,6 +51,10 @@ def test_ask_mod_operation():
     assert get_line_result('42 % 101 = ?') == 42
 
 #======================== complex operations =================================
+
+def test_show_complex():
+    assert get_line_result('3 + 2i = ?') == '3 + 2i'
+
 #======================== matrix operations ==================================
 #======================== composed operation =================================
 
@@ -60,7 +64,7 @@ def test_composed_basic_operators():
 def test_composed_basic_operators_2():
     assert get_line_result('(((21%(2+20))) * 2)/1 + (0 * 42)//1 = ?') == 42
 
-#======================== variable assignement ===============================
+#======================== variables ==========================================
 
 def test_simple_assignation():
     assert get_line_result('a = 42') == 42
@@ -98,7 +102,6 @@ def test_complex_assignation():
     )
     assert res == 42
 
-#======================== variable calculation ===============================
 #======================== functions assignement ==============================
 #======================== function calculation ===============================
 #======================== Vars & funcs rewrite ===============================
