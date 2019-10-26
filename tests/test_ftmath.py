@@ -57,6 +57,15 @@ def test_complex_addition_real():
 
     assert c1_repr == c2_repr
 
+def test_complex_addition_real_reversed():
+    c1 = 3 + complex(4, 2)
+    c2 = 3 + Complex(4, 2)
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
 def test_complex_addition_complex():
     c1 = complex(4, 2) + complex(2, 1)
     c2 = Complex(4, 2) + Complex(2, 1)
@@ -69,6 +78,15 @@ def test_complex_addition_complex():
 def test_complex_sub_real():
     c1 = complex(4, 2) - 3
     c2 = Complex(4, 2) - 3
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
+def test_complex_sub_real_reversed():
+    c1 = 3 - complex(4, 2)
+    c2 = 3 - Complex(4, 2)
 
     c1_repr = c1.real, c1.imag
     c2_repr = c2.r, c2.i
@@ -93,9 +111,45 @@ def test_complex_mul_real():
 
     assert c1_repr == c2_repr
 
+def test_complex_mul_real_reversed():
+    c1 = 21 * complex(4, 2)
+    c2 = 21 * Complex(4, 2)
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
+def test_complex_mul_complex():
+    c1 = complex(4, 2) * complex(2, 4)
+    c2 = Complex(4, 2) * Complex(2, 4)
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
 def test_complex_div_real():
     c1 = complex(4, 2) / 2
     c2 = Complex(4, 2) / 2
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
+def test_complex_div_real_reversed():
+    c1 = 2 / complex(4, 2)
+    c2 = 2 / Complex(4, 2)
+
+    c1_repr = c1.real, c1.imag
+    c2_repr = c2.r, c2.i
+
+    assert c1_repr == c2_repr
+
+def test_complex_div_complex():
+    c1 = complex(4, 2) / complex(2, 4)
+    c2 = Complex(4, 2) / Complex(2, 4)
 
     c1_repr = c1.real, c1.imag
     c2_repr = c2.r, c2.i
