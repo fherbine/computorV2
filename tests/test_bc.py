@@ -53,6 +53,13 @@ def test_ask_mod_operation():
 #======================== complex operations =================================
 #======================== matrix operations ==================================
 #======================== composed operation =================================
+
+def test_composed_basic_operators():
+    assert get_line_result('(4/2+19) * 2 = ?') == 42
+
+def test_composed_basic_operators_2():
+    assert get_line_result('(((21%(2+20))) * 2)/1 + (0 * 42)//1 = ?') == 42
+
 #======================== variable assignement ===============================
 #======================== variable calculation ===============================
 #======================== functions assignement ==============================
