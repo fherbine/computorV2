@@ -106,6 +106,9 @@ class Complex:
             return Complex(r, i)
         return Complex(r + number, i)
 
+    def __radd__(self, number):
+        return self.__add__(number)
+
     def __sub__(self, number):
         r = self.r
         i = self.i
@@ -116,21 +119,54 @@ class Complex:
             return Complex(r, i)
         return Complex(r - number, i)
 
+    def __rsub__(self, number):
+        r = self.r
+        i = self.i
+
+        return Complex(number, 0) - self
+
     def __mul__(self, number):
         if isinstance(number, Complex):
-            # Not implemented yet
-            raise TypeError(
-                'Cannot multiplie complex numbers between them.'
-            )
+            r = self.r * number.r - self.i * number.i
+            i = self.r * number.i + number.r * self.i
+            return Complex(r, i)
+
         return Complex(self.r * number, self.i * number)
+
+    def __rmul__(self, number):
+        return self.__mul__(number)
 
     def __truediv__(self, number):
         if isinstance(number, Complex):
-            # Not implemented yet
-            raise TypeError(
-                'Cannot divide complex numbers between them.'
+            r = (
+                (self.r * number.r + self.i * number.i)
+                / (ft_power(number.r, 2) + ft_power(number.i, 2))
             )
+            i = (
+                (self.i * number.r - number.i * self.r)
+                / (ft_power(number.r, 2) + ft_power(number.i, 2))
+            )
+            return Complex(r, i)
         return Complex(self.r / number, self.i / number)
+
+    def __rtruediv__(self, number):
+        if isinstance(number, Complex):
+            number.__truediv__(self)
+
+        return Complex(number, 0) / self
+
+    def __floordiv__(self, _):
+        raise TypeError('Cannot do a floor div with Complex object')
+
+    def __rfloordiv__(self, _):
+        raise TypeError('Cannot do a floor div with Complex object')
+
+    def __mod__(self, _):
+        raise TypeError('Cannot do a modulo with Complex object')
+
+    def __rmod__(self, _):
+        raise TypeError('Cannot do a modulo with Complex object')
+
 
 class Matrix:
     def __init__(self, value):
