@@ -38,5 +38,5 @@ Todos:
 - [ ] History of commands w/results
 - [ ] Matrix inversion
 - [ ] An extension of the matrix computation applied to vector computation
-- [x] Integer divs
+- [x] Integer divs (floordivs)
 - [ ] Others (cmds: quit, help, stored vars, ...)
