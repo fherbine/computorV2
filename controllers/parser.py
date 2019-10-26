@@ -117,6 +117,8 @@ class BcParser(Parser):
     @_('LPAREN expr RPAREN',
        'LBRCK expr RBRCK')
     def expr(self, parsed):
+        if isinstance(parsed.expr, MagicStr):
+            return MagicStr('(%s)' % parsed.expr)
         return parsed.expr
 
     #matrix handling
