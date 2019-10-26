@@ -28,3 +28,28 @@ def bc_repl(*lines):
     return res
 
 #=============================================================================
+
+
+#======================= basic math calcultaion ==============================
+
+def test_ask_number():
+    assert get_line_result('42 = ?') == 42
+
+def test_ask_add_operation():
+    assert get_line_result('21 + 21 = ?') == 42
+
+def test_ask_sub_operation():
+    assert get_line_result('63 - 21 = ?') == 42
+
+def test_ask_mul_operation():
+    assert get_line_result('2 * 21 = ?') == 42
+
+def test_ask_truediv_operation():
+    assert get_line_result('84 / 2 = ?') == 42
+
+def test_ask_mod_operation():
+    assert get_line_result('42 % 101 = ?') == 42
+
+#BONUS //
+def test_ask_floordiv_operation():
+    assert get_line_result('85 // 2 = ?') == 42
