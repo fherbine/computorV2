@@ -93,7 +93,7 @@ class BcParser(Parser):
             return func.body
         elif isinstance(parsed[0], MagicStr):
             #assign variable
-            self.variables[parsed[0]] = parsed[2]
+            self.variables[str(parsed[0])] = parsed[2]
             return parsed[2]
 
         raise SyntaxError(f'Cannot assign {parsed[2]} to {parsed[0]}')
