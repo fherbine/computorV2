@@ -46,6 +46,7 @@ class BcParser(Parser):
         ('left', MINUS, ADD),
         ('left', TIMES, DIVIDE, INTDIV, MODULO),
         ('left', POWER),
+        ('left', IMAG),
         ('right', UMINUS),
     )
 
@@ -174,6 +175,11 @@ class BcParser(Parser):
     @_('expr POWER expr')
     def expr(self, parsed):
         return ft_power(parsed.expr0, parsed.expr1)
+
+    @_('IMAG expr',
+       'expr IMAG')
+    def expr(self, parsed):
+        return Complex(0, parsed.expr)
 
     #UMINUS > Very high precedence
     @_('MINUS expr %prec UMINUS')
