@@ -53,7 +53,7 @@ def test_ask_mod_operation():
 #======================== complex operations =================================
 
 def test_show_complex():
-    assert get_line_result('3 + 2i = ?') == '3 + 2i'
+    assert str(get_line_result('3 + 2 * i = ?')) == '(3 + 2i)'
 
 #======================== matrix operations ==================================
 #======================== composed operation =================================
