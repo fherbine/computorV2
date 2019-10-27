@@ -4,7 +4,8 @@ from sly import Lexer
 class BcLexer(Lexer):
     tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
                LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
-               SEMICOLON, COMMA, NUMBER, POWER, INTDIV, QUIT}
+               SEMICOLON, COMMA, NUMBER, POWER, INTDIV, QUIT,
+               VARS, FUNCS }
 
     ignore = ' \t'
 
@@ -17,6 +18,8 @@ class BcLexer(Lexer):
     IMAG = r'[iI]'
     ID = r'[A-Za-z]+'
     ID['quit'] = QUIT
+    ID['vars'] = VARS
+    ID['funcs'] = FUNCS
     LPAREN = r'\('
     RPAREN = r'\)'
     LBRCK = r'\['

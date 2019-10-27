@@ -206,11 +206,24 @@ class BcParser(Parser):
             return self.variables[parsed.ID.upper()]
         return MagicStr(parsed.ID)
 
-    @_('exit')
-    def statement(self, _):
-        exit_bc()
-        return None
+    @_('builtin_command')
+    def statement(self, parsed):
+        cmd = parsed.builtin_command
+        if cmd == 'quit':
+            exit_bc()
+            return None
+        elif cmd == 'vars':
+            out = '\n'.join(
+                [f'{name}: {value}' for name, value in self.variables.items()]
+            )
+        elif cmd == 'funcs':
+            out = '\n'.join(
+                [f'{f.name}({f.args}): {f.body}' for f in self.functions.values()]
+            )
+        return out
 
-    @_('QUIT LPAREN RPAREN')
-    def exit(self, _):
-        return None
+    @_('QUIT LPAREN RPAREN',
+       'VARS LPAREN RPAREN',
+       'FUNCS LPAREN RPAREN')
+    def builtin_command(self, parsed):
+        return parsed[0]
