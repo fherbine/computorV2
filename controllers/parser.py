@@ -20,7 +20,9 @@ class Function:
         lexer = BcLexer()
         parser = BcParser(True)
 
-        variables = {str(name): value for name, value in zip(self.args, args)}
+        variables = {
+            str(name).upper(): value for name, value in zip(self.args, args)
+        }
         parser.variables = variables
 
         return parser.parse(lexer.tokenize(str(self.body)))
@@ -93,11 +95,11 @@ class BcParser(Parser):
             #assign function
             func = parsed[0]
             func.body = parsed[2]
-            self.functions[func.name] = func
+            self.functions[func.name.upper()] = func
             return func.body
         elif isinstance(parsed[0], MagicStr):
             #assign variable
-            self.variables[str(parsed[0])] = parsed[2]
+            self.variables[str(parsed[0]).upper()] = parsed[2]
             return parsed[2]
 
         raise SyntaxError(f'Cannot assign {parsed[2]} to {parsed[0]}')
@@ -105,9 +107,9 @@ class BcParser(Parser):
     # function calls
     @_('ID LPAREN expr RPAREN')
     def expr(self, parsed):
-        if parsed[0] in self.functions:
+        if parsed[0].upper() in self.functions:
             #Function already exists
-            return self.functions[parsed[0]].call([parsed[2]])
+            return self.functions[parsed[0].upper()].call([parsed[2]])
         else:
             #Create a new function
             return Function(parsed[0], [parsed[2]], '')
@@ -200,8 +202,8 @@ class BcParser(Parser):
     # calling ID (var/func)
     @_('ID')
     def expr(self, parsed):
-        if parsed.ID in self.variables:
-            return self.variables[parsed.ID]
+        if parsed.ID.upper() in self.variables:
+            return self.variables[parsed.ID.upper()]
         return MagicStr(parsed.ID)
 
     @_('exit')

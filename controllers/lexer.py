@@ -36,7 +36,7 @@ class BcLexer(Lexer):
         return token
 
     def ID(self, token):
-        token.value = token.value.upper()
+        token.value = token.value
         return token
 
     def error(self, token):
