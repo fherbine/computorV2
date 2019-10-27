@@ -122,6 +122,14 @@ def test_div_complex_to_complex():
     assert str(get_line_result('(2 + i) / (4 + 2 * i) = ?')) == '0.5'
 
 #======================== matrix operations ==================================
+
+def test_get_one_dimension_matrix():
+    assert str(get_line_result('[[4, 2]] = ?')) == '[4, 2]'
+
+def test_assign_two_dimension_matrix():
+    assert str(get_line_result('[[4, 2]; [2,1]] = ?')) == '[4, 2]\n[2, 1]'
+
+
 #======================== composed operation =================================
 
 def test_composed_basic_operators():
