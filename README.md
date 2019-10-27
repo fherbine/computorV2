@@ -25,7 +25,7 @@ Todos:
 **MANDATORY**
 - [x] Lexer
 - [ ] Parser
-- [ ] Math lib
+- [x] Math lib
 - [ ] Documentation
 
 **Bonus**
@@ -40,3 +40,4 @@ Todos:
 - [ ] An extension of the matrix computation applied to vector computation
 - [x] Integer divs (floordivs)
 - [ ] Others (cmds: quit, help, stored vars, ...)
+    - [x] quit
