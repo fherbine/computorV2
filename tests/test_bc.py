@@ -130,7 +130,7 @@ def test_composed_basic_operators():
 def test_composed_basic_operators_2():
     assert get_line_result('(((21%(2+20))) * 2)/1 + (0 * 42)//1 = ?') == 42
 
-#======================== variables ==========================================
+#======================== variables & funcs ==================================
 
 def test_simple_assignation():
     assert get_line_result('a = 42') == 42
@@ -178,8 +178,31 @@ def test_complex_calculation():
     )
     assert res == 42
 
-#======================== functions assignement ==============================
-#======================== function calculation ===============================
+def test_complex_calculation_to_variable_assignement():
+    res = bc_repl(
+        'a(x) = x * 2',
+        'moscow = 21',
+        'useless(toto) = toto',
+        'two = 2',
+        'key = (useless(a(moscow)) + a(0) + a(useless(moscow))) * two // 4',
+    )
+    assert res == 42
+
+def test_non_case_sensitive_ids():
+    res = bc_repl(
+        'a(x) = x * 2',
+        'moscow = 21',
+        'zero = 0',
+        'useless(toto) = tOTO - zero',
+        'twO = 2',
+        '(useless(a(MOSCOW)) + a(0) + a(UseLess(mOscOw))) * two // 4 = ?',
+    )
+    assert res == 42
+
+
+def test_function_assignation():
+    assert str(get_line_result('a(x) = x * 42')) == 'x * 42'
+
 #======================== Vars & funcs rewrite ===============================
 #======================== Polynomials ========================================
 #------------------------ BONUS ==============================================
