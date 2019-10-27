@@ -27,6 +27,7 @@ Todos:
 - [ ] Parser
 - [x] Math lib
 - [ ] Documentation
+- [ ] complex raised to the power
 
 **Bonus**
 - [ ] Unittests
