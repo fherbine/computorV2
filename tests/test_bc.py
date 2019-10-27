@@ -55,8 +55,71 @@ def test_ask_mod_operation():
 def test_show_complex():
     assert str(get_line_result('3 + 2 * i = ?')) == '(3 + 2i)'
 
-def test_show_implicit_complex():
-    assert str(get_line_result('3 + 2i = ?')) == '(3 + 2i)'
+def test_show_complex_no_real_part():
+    assert str(get_line_result('0 + 2 * i = ?')) == '2i'
+
+def test_show_complex_no_imag_part():
+    assert str(get_line_result('3 + 0 * i = ?')) == '3'
+
+def test_add_complex_to_real():
+    assert str(get_line_result('4 + 3 + 2 * i = ?')) == '(7 + 2i)'
+
+def test_add_complex_expr_to_real():
+    assert str(get_line_result('4 + (3 + 2 * i) = ?')) == '(7 + 2i)'
+
+def test_add_real_to_complex():
+    assert str(get_line_result('3 + 2 * i + 4= ?')) == '(7 + 2i)'
+
+def test_add_real_expr_to_complex():
+    assert str(get_line_result('(3 + 2 * i) + 4 = ?')) == '(7 + 2i)'
+
+def test_add_complex_to_complex():
+    assert str(get_line_result('(2 + 1 * i) + (4 + 2 * i) = ?')) == '(6 + 3i)'
+
+def test_sub_complex_to_real():
+    assert str(get_line_result('4 - 3 + 2 * i = ?')) == '(1 + 2i)'
+
+def test_sub_complex_expr_to_real():
+    assert str(get_line_result('4 - (3 + 2 * i) = ?')) == '(1 - 2i)'
+
+def test_sub_real_to_complex():
+    assert str(get_line_result('3 + 2 * i - 4= ?')) == '(-1 + 2i)'
+
+def test_sub_real_expr_to_complex():
+    assert str(get_line_result('(3 + 2 * i) - 4 = ?')) == '(-1 + 2i)'
+
+def test_sub_complex_to_complex():
+    assert str(get_line_result('(2 + i) - (4 + 2 * i) = ?')) == '(-2 - i)'
+
+def test_mul_complex_to_real():
+    assert str(get_line_result('4 * 3 + 2 * i = ?')) == '(12 + 2i)'
+
+def test_mul_complex_expr_to_real():
+    assert str(get_line_result('4 * (3 + 2 * i) = ?')) == '(12 + 8i)'
+
+def test_mul_real_to_complex():
+    assert str(get_line_result('3 + 2 * i * 4= ?')) == '(3 + 8i)'
+
+def test_mul_real_expr_to_complex():
+    assert str(get_line_result('(3 + 2 * i) * 4 = ?')) == '(12 + 8i)'
+
+def test_mul_complex_to_complex():
+    assert str(get_line_result('(2 + i) * (4 + 2 * i) = ?')) == '(6 + 8i)'
+
+def test_div_complex_to_real():
+    assert str(get_line_result('4 / 2 + 2 * i = ?')) == '(2 + 2i)'
+
+def test_div_complex_expr_to_real():
+    assert str(get_line_result('4 / (4 + 2 * i) = ?')) == '(0.8 - 0.4i)'
+
+def test_div_real_to_complex():
+    assert str(get_line_result('3 + 2 * i / 4= ?')) == '(3 + 0.5i)'
+
+def test_div_real_expr_to_complex():
+    assert str(get_line_result('(3 + 2 * i) / 4 = ?')) == '(0.75 + 0.5i)'
+
+def test_div_complex_to_complex():
+    assert str(get_line_result('(2 + i) / (4 + 2 * i) = ?')) == '0.5'
 
 #======================== matrix operations ==================================
 #======================== composed operation =================================
