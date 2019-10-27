@@ -2,7 +2,7 @@ from sly import Parser
 
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
-from controllers.utils import MagicStr
+from controllers.utils import MagicStr, exit_bc
 
 
 def sanitize_result(expr):
@@ -203,3 +203,12 @@ class BcParser(Parser):
         if parsed.ID in self.variables:
             return self.variables[parsed.ID]
         return MagicStr(parsed.ID)
+
+    @_('exit')
+    def statement(self, _):
+        exit_bc()
+        return None
+
+    @_('QUIT LPAREN RPAREN')
+    def exit(self, _):
+        return None

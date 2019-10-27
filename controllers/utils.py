@@ -1,3 +1,9 @@
+import sys
+
+def exit_bc():
+    print('quit')
+    sys.exit(0)
+
 class MagicStr:
     def __init__(self, value):
         self.string = value
