@@ -168,6 +168,16 @@ def test_complex_assignation():
     )
     assert res == 42
 
+def test_complex_calculation():
+    res = bc_repl(
+        'a(x) = x * 2',
+        'moscow = 21',
+        'useless(toto) = toto',
+        'two = 2',
+        '(useless(a(moscow)) + a(0) + a(useless(moscow))) * two // 4 = ?',
+    )
+    assert res == 42
+
 #======================== functions assignement ==============================
 #======================== function calculation ===============================
 #======================== Vars & funcs rewrite ===============================
