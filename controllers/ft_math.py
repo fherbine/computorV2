@@ -88,6 +88,9 @@ class Complex:
         if not i:
             return f'{r}'
 
+        if i == 1:
+            i = ''
+
         if not r:
             if separator == '+':
                 separator = ''
