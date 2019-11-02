@@ -250,3 +250,51 @@ class PolyParser(Parser):
 
     def error(self, parsed):
         raise SyntaxError('An error occurs while parsing.')
+
+
+class PolynomialInterpreter:
+    str_expr = ''
+    reduced_form = {}
+
+    def __init__(self, str_expr):
+        self.str_expr = str_expr
+
+    def get_reduced_form(self):
+        lexer = PolyLexer()
+        parser = PolyParser()
+
+        if not self.str_expr:
+            return
+
+        self.reduced_form = parser.parser(lexer.tokenize(self.str_expr))
+
+    def __str__(self):
+        return self.dispatch()
+
+    def dispatch(self):
+        output = ''
+        reduced_form = self.reduced_form
+
+        for degree, value in reduced_form.items():
+            formula = '' if not output else ' '
+
+            if not value and (any(reduced_form.values()) or degree != 'X^0'):
+                continue
+
+            if degree == 'X^0':
+                formula = f'{value}'
+            else:
+                if value < 0:
+                    formula += '- ' if formula else '-'
+                else:
+                    formula += '+ ' if formula else ''
+                formula += str(ft_abs(value))
+
+                if degree == 'X^1':
+                    formula += f' * X'
+                else:
+                    formula += f' * {degree}'
+
+            output += formula
+
+        return f'{output}'
