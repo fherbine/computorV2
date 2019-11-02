@@ -16,7 +16,8 @@ class PolyLexer(Lexer):
     DIVIDE = r'/'
     LPAREN = r'[\(\[]'
     RPAREN = r'[\)\]]'
-    X = r'X(?:\^[0-9]+)?'
+    I = r'[iI]'
+    X = r'[A-Za-z]+(?:\^[0-9]+)?'
     POWER = r'\^'
 
     def NUMBER(self, token):
@@ -27,9 +28,14 @@ class PolyLexer(Lexer):
         return token
 
     def X(self, token):
-        if token.value == 'X':
-            token.value = 'X^1'
+        value = token.value.split('^')
+        power = value[-1] if len(value) == 2 else 1
+
+        token.value = f'X^{power}'
         return token
+
+    def I(self, token):
+        raise TypeError('Complex numbers are illegal for polynomial equation.')
 
     def error(self, token):
         raise SyntaxError('Illegal character: `%s`' % token.value[0])
