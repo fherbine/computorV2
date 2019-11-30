@@ -172,10 +172,16 @@ class BcParser(Parser):
 
     @_('expr TIMES expr')
     def expr(self, parsed):
-        return parsed.expr0 * parsed.expr1
+        try:
+            return parsed.expr0 * parsed.expr1
+        except:
+            return parsed.expr1 * parsed.expr0
 
     @_('expr DIVIDE expr')
     def expr(self, parsed):
+        if isinstance(parsed.expr1, MagicStr):
+            return parsed.expr1.__rtruediv__(parsed.expr0)
+
         return sanitize_result(parsed.expr0 / parsed.expr1)
 
     @_('expr MODULO expr')

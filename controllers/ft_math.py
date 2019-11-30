@@ -24,6 +24,9 @@ def ft_power(n, p):
     if isinstance(n, MagicStr) or isinstance(p, MagicStr):
         return(MagicStr(f'{n}^{p}'))
 
+    if isinstance(p, Complex) or isinstance(n, Complex):
+        raise TypeError('Complex power is not handled.')
+
     for _ in range(p):
         total *= n
 
@@ -137,6 +140,9 @@ class Complex:
             i = self.r * number.i + number.r * self.i
             return Complex(r, i)
 
+        if isinstance(number, MagicStr):
+            raise ValueError('Cannot multiplie Complex w/MagicStr')
+
         return Complex(self.r * number, self.i * number)
 
     def __rmul__(self, number):
@@ -153,6 +159,10 @@ class Complex:
                 / (ft_power(number.r, 2) + ft_power(number.i, 2))
             )
             return Complex(r, i)
+
+        if isinstance(number, MagicStr):
+            raise ValueError('Cannot divide Complex w/MagicStr')
+
         return Complex(self.r / number, self.i / number)
 
     def __rtruediv__(self, number):
