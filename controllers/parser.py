@@ -46,7 +46,7 @@ class BcParser(Parser):
     precedence = (
         ('left', QMARK),
         ('left', MINUS, ADD),
-        ('left', TIMES, DIVIDE, INTDIV, MODULO),
+        ('left', TIMES, DIVIDE, INTDIV, MODULO, MATRIX_TIMES),
         ('left', POWER),
         ('left', IMAG),
         ('right', UMINUS),
@@ -124,6 +124,16 @@ class BcParser(Parser):
         return parsed.expr
 
     #matrix handling
+    @_('expr MATRIX_TIMES expr')
+    def expr(self, parsed):
+        if (
+            not isinstance(parsed.expr0, Matrix)
+            or not isinstance(parsed.expr1, Matrix)
+        ):
+            raise TypeError('Both expressions should be matrix for `**`.')
+
+        return parsed.expr0.matrix_mul(parsed.expr1)
+
     @_('LBRCK matrix_group RBRCK')
     def expr(self, parsed):
         return Matrix(parsed.matrix_group)
@@ -145,7 +155,7 @@ class BcParser(Parser):
 
     @_('matrix_elem COMMA expr')
     def matrix_elem(self, parsed):
-        return parsed.matrix_elem + expr
+        return parsed.matrix_elem + [parsed.expr]
 
     @_('expr COMMA expr')
     def matrix_elem(self, parsed):

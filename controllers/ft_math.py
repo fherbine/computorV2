@@ -9,7 +9,10 @@ Contained objects are:
 - Complex(r, i): Represents a coplex number.
 """
 
+import operator
+
 from controllers.utils import MagicStr
+
 
 def ft_abs(n):
     return -n if n < 0 else n
@@ -178,6 +181,20 @@ class Matrix:
         self.matrix = value
 
     @property
+    def x(self):
+        return self.dimension[0]
+
+    @property
+    def y(self):
+        return self.dimension[1]
+
+    def column(self, index):
+        return [elem[index] for elem in self.matrix]
+
+    def line(self, index):
+        return self.matrix[index]
+
+    @property
     def matrix(self):
         return self._matrix
 
@@ -209,6 +226,30 @@ class Matrix:
     def __setitem__(self, key, value):
         self.matrix[key] = value
 
+    def matrix_mul(self, elem):
+        if self.x != elem.y:
+            raise ValueError(
+'''
+Width of first Matrix should be equal to the height of the second one:
+{x} != {y}
+'''.format(x=self.x, y=elem.y)
+)
+        final_matrix = list()
+
+        for index, line in enumerate(self.matrix):
+            new_line = list()
+
+            for col_index in range(elem.x):
+                new_elem = sum(
+                    [a * b for a, b in zip(line, elem.column(col_index))]
+                )
+
+                new_line.append(new_elem)
+
+            final_matrix.append(new_line)
+
+        return Matrix(final_matrix)
+
     def _do_matrix_operation(self, elem, operation):
         final_matrix = []
 
@@ -228,6 +269,8 @@ class Matrix:
 
                 for a in line:
                     result = getattr(operator, operation)(a, elem)
+                    final_matrix[-1].append(result)
+
         return final_matrix
 
     def __add__(self, elem):
@@ -239,5 +282,11 @@ class Matrix:
     def __mul__(self, elem):
         return self._do_matrix_operation(elem, 'mul')
 
+    def __rmul__(self, elem):
+        return self.__mul__(elem)
+
     def __truediv__(self, elem):
         return self._do_matrix_operation(elem, 'truediv')
+
+    def __rtruediv__(self, elem):
+        return self.__truediv__(elem)

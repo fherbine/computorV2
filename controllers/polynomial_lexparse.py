@@ -1,6 +1,6 @@
 from sly import Lexer, Parser
 
-from controllers.ft_math import ft_power
+from controllers.ft_math import ft_power, ft_abs
 
 class PolyLexer(Lexer):
     tokens = { NUMBER, ADD, MINUS, TIMES, DIVIDE, LPAREN,
@@ -134,8 +134,6 @@ class PolyParser(Parser):
         self.degrees[x][degree_index] = coef
         return (x, coef, degree_index)
 
-    #@_('expr DIVIDE xexpr')
-
     @_('xexpr DIVIDE expr')
     def xexpr(self, parsed):
         x, coef, degree_index = parsed.xexpr
@@ -239,10 +237,6 @@ class PolyParser(Parser):
     @_('LPAREN expr RPAREN')
     def expr(self, parsed):
         return parsed.expr
-
-    @_('LPAREN xexpr RPAREN')
-    def xexpr(self, parsed):
-        return parsed.xexpr
 
     @_('NUMBER')
     def expr(self, parsed):

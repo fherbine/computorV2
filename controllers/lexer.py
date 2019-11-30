@@ -5,12 +5,13 @@ class BcLexer(Lexer):
     tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
                LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
                SEMICOLON, COMMA, NUMBER, POWER, INTDIV, QUIT,
-               VARS, FUNCS }
+               VARS, FUNCS, MATRIX_TIMES }
 
     ignore = ' \t'
 
     ADD = r'\+'
     MINUS = r'-'
+    MATRIX_TIMES = r'\*\*'
     TIMES = r'\*'
     INTDIV = r'//'
     DIVIDE = r'/'
