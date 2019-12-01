@@ -138,8 +138,16 @@ class BcParser(Parser):
 
     @_('expr ASSIGN QMARK')
     def get_statement(self, parsed):
+        if not isinstance(parsed.expr, Function):
+            return parsed.expr
 
-        return parsed.expr
+        if not parsed[0].name.upper() in self.functions:
+            raise ValueError('%s is not defined' % parsed[0].name)
+
+        function = self.functions[parsed[0].name.upper()]
+
+        return function.body
+
 
     @_('expr')
     def statement(self, parsed):
