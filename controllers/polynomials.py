@@ -231,4 +231,6 @@ class PolyCalc:
                 continue
 
             if degree not in AUTHORIZED_POLYNOMS:
-                raise Exception('Operaion is strictly greater than 2.')
+                raise ValueError(
+                    'Polynomial degree is strictly greater than 2.'
+                )

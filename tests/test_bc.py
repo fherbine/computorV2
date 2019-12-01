@@ -1,6 +1,7 @@
 """Main test file for Computor V2.
 """
 
+import pytest
 
 from controllers.lexer import BcLexer
 from controllers.parser import BcParser
@@ -288,7 +289,7 @@ def test_non_case_sensitive_ids():
         'a(x) = x * 2',
         'moscow = 21',
         'zero = 0',
-        'useless(toto) = tOTO - zero',
+        'useless(Toto) = tOTO - zero',
         'twO = 2',
         '(useless(a(MOSCOW)) + a(0) + a(UseLess(mOscOw))) * two // 4 = ?',
     )
@@ -303,6 +304,139 @@ def test_function_assignation_reverse_factor():
 
 #======================== Vars & funcs rewrite ===============================
 #======================== Polynomials ========================================
+ININITE = '\u221e'
+NO_SOLUTION_REAL = 'There is no solution(s) in real.'
+UNIQUE_SOLUTION_REAL = 'There is unique solution(s) in real.\n'
+ONE_SOLUTION_REAL = 'There is one solution(s) in real.\n'
+TWO_SOLUTION_REAL = 'There is two solution(s) in real.\n'
+TWO_SOLUTION_COMPLEX = 'There is two solution(s) in complex.\n'
+INFINITE_SOLUTION_REAL = '''There is infinite number of solution(s) in real.
+''' + ININITE
+
+
+def test_simple_deg0_poly_infinite():
+    res = bc_repl(
+        'f(x) = 0',
+        'f(x) = 0 ?',
+    )
+    assert str(res) == INFINITE_SOLUTION_REAL
+
+def test_simple_deg0_poly_none():
+    res = bc_repl(
+        'f(x) = 42',
+        'f(x) = 0 ?',
+    )
+    assert str(res) == NO_SOLUTION_REAL
+
+def test_simple_deg1_poly():
+    res = bc_repl(
+        'f(x) = x',
+        'f(x) = 0 ?',
+    )
+    assert str(res) == UNIQUE_SOLUTION_REAL + '0'
+
+def test_simple_deg2_poly_one_sol():
+    res = bc_repl(
+        'f(x) = x^2 * 2 + 9 / 8',
+        'f(x) = 3 * x ?',
+    )
+    assert str(res) == ONE_SOLUTION_REAL + f'{3 / 4}'
+
+def test_simple_deg2_poly_two_sol_real():
+    res = bc_repl(
+        'f(x) = x^2 * 2 - 6',
+        'f(x) = x ?',
+    )
+    assert str(res) == TWO_SOLUTION_REAL + '%s\n2.0' % str(-3 / 2)
+
+def test_simple_deg2_poly_two_sol_complex():
+    res = bc_repl(
+        'f(x) = x^2 + x * 4',
+        'f(x) = -20 ?',
+    )
+    assert str(res) == TWO_SOLUTION_COMPLEX + '(-2 - 4i)\n(-2 + 4i)'
+
+#======================== Expected errors ====================================
+
+def test_lexer_unknown_char():
+    with pytest.raises(SyntaxError):
+        str(get_line_result('>'))
+
+def test_parser_regular_syntax_error():
+    with pytest.raises(SyntaxError):
+        str(get_line_result('?'))
+
+def test_negative_exp():
+    with pytest.raises(ValueError):
+        str(get_line_result('a = 2^-1'))
+
+def test_float_exp():
+    with pytest.raises(ValueError):
+        str(get_line_result('a = 2^3.5'))
+
+def test_variable_unknown_assignation():
+    with pytest.raises(ValueError):
+        str(get_line_result('a = b'))
+
+def test_ivar_assignation():
+    with pytest.raises(SyntaxError):
+        str(get_line_result('i = 3'))
+
+def test_eq_with_variable_first_member():
+    with pytest.raises(SyntaxError):
+        str(get_line_result('a = 0 ?'))
+
+def test_function_assignement_wrong_var():
+    with pytest.raises(ValueError):
+        str(get_line_result('f(x) = y'))
+
+def test_function_assignement_with_no_params():
+    with pytest.raises(SyntaxError):
+        str(get_line_result('f() = y'))
+
+def test_equation_with_complex_right_part():
+    with pytest.raises(TypeError):
+        bc_repl(
+            'f(x) = x',
+            'f(x) = i ?'
+        )
+
+def test_equation_with_complex_left_part():
+    with pytest.raises(TypeError):
+        bc_repl(
+            'f(x) = 2 * i',
+            'f(x) = 0 ?'
+        )
+
+def test_equation_with_matrix_left_part():
+    with pytest.raises(TypeError):
+        bc_repl(
+            'f(x) = [[2, 3]]',
+            'f(x) = 0 ?'
+        )
+
+def test_equation_with_illegal_positive_degree():
+    with pytest.raises(ValueError):
+        bc_repl(
+            'f(x) = x^3',
+            'f(x) = 0 ?'
+        )
+
+def test_equation_not_compatible_unknown():
+    with pytest.raises(ValueError):
+        bc_repl(
+            'f(x) = x',
+            'f(x) = y ?'
+        )
+
+def test_equation_not_compatible_funcs_unknown():
+    with pytest.raises(ValueError):
+        bc_repl(
+            'f(x) = x',
+            'b(y) = y',
+            'f(x) = b(y) ?'
+        )
+
 #------------------------ BONUS ==============================================
 
 def test_ask_floordiv_operation():

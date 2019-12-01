@@ -34,7 +34,7 @@ class BcLexer(Lexer):
 
     def NUMBER(self, token):
         if float(token.value).is_integer():
-            token.value = int(token.value)
+            token.value = int(float(token.value))
         else:
             token.value = float(token.value)
         return token

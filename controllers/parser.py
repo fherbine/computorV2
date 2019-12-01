@@ -1,3 +1,5 @@
+import re
+
 from sly import Parser
 
 from controllers.lexer import BcLexer
@@ -14,6 +16,8 @@ def sanitize_result(expr):
 
 class Function:
     reduced_form = {}
+    complex_in_body = False
+    matrix_in_body = False
 
     def __init__(self, name, args, body):
         self.name = name
@@ -36,6 +40,24 @@ class Function:
         self.reduced_form = simplified_body.reduced_form
         return str(simplified_body)
 
+    def _is_body_variable_in_args(self, body):
+        unknown_vars = re.findall(r'[A-Za-z]+', body)
+
+        if 'i' in unknown_vars:
+            self.complex_in_body = True
+
+        if ',' in body:
+            self.matrix_in_body = True
+
+        for var in unknown_vars:
+            if (
+                var.upper() not in [str(arg).upper() for arg in self.args]
+                and var != 'i'
+            ):
+                return False
+
+        return True
+
     @property
     def body(self):
         return self._body
@@ -44,6 +66,11 @@ class Function:
     def body(self, value):
         if isinstance(value, str) and not value:
             raise ValueError('Function\'s body is empty.')
+
+        if not self._is_body_variable_in_args(str(value)):
+            raise ValueError(
+                'Var in expression must represent a defined variable or arg.'
+            )
 
         try:
             #XXX: Try to find a proper cast to MagicStr
@@ -104,7 +131,7 @@ class BcParser(Parser):
         ):
             raise TypeError(
                 'Cannot evaluate `{member}`.\nWrong type: {mtype}'.format(
-                    member=parsed.expr1.replace('\n', '\\n'),
+                    member=str(parsed.expr1).replace('\n', '\\n'),
                     mtype=type(parsed.expr1).__name__,
             ))
 
@@ -116,6 +143,12 @@ class BcParser(Parser):
 
         function = self.functions[parsed[0].name.upper()]
         unknown = function.args[0]
+
+        if function.complex_in_body:
+            raise TypeError('Cannot evaluate function with Complex in body.')
+
+        if function.matrix_in_body:
+            raise TypeError('Cannot evaluate function with Matrix in body.')
 
         if isinstance(parsed.expr1, MagicStr):
             magic_str = parsed.expr1
@@ -129,11 +162,17 @@ class BcParser(Parser):
             _tmp.body = str(parsed.expr1)
         else:
             #FIXME: need a specific case
-            _tmp = parsed.expr1
+            if not parsed.expr1.name.upper() in self.functions:
+                raise ValueError('%s is not defined' % parsed.expr1.name)
+
+            _tmp = self.functions[parsed.expr1.name.upper()]
+
+            if str(_tmp.args[0]) != str(unknown):
+                raise ValueError('Unknown numbers are not compatible.')
 
         calc = PolyCalc()
         calc.simplify(function.reduced_form, _tmp.reduced_form)
-        return '\n'.join(calc.solve())
+        return '\n'.join(map(str, calc.solve()))
 
 
     @_('expr ASSIGN QMARK')
@@ -164,6 +203,12 @@ class BcParser(Parser):
             return func.body
         elif isinstance(parsed[0], MagicStr):
             #assign variable
+
+            if isinstance(parsed.expr1, MagicStr):
+                raise ValueError(
+                    'Trying to assign undefined value to variable.'
+                )
+
             self.variables[str(parsed[0]).upper()] = parsed[2]
             return parsed[2]
 
@@ -265,6 +310,14 @@ class BcParser(Parser):
 
     @_('expr POWER expr')
     def expr(self, parsed):
+        if (
+            isinstance(parsed.expr1, int)
+            and parsed.expr1 < 0
+        ) or (
+            isinstance(parsed.expr1, float)
+            and not parsed.expr1.is_integer()
+        ):
+            raise ValueError('Power exponant must be positive integer')
         return ft_power(parsed.expr0, parsed.expr1)
 
     @_('IMAG expr',
