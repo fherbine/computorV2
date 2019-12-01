@@ -296,7 +296,10 @@ def test_non_case_sensitive_ids():
 
 
 def test_function_assignation():
-    assert str(get_line_result('a(x) = x * 42')) == 'x * 42'
+    assert str(get_line_result('a(x) = 42 * x')) == '42 * x'
+
+def test_function_assignation_reverse_factor():
+    assert str(get_line_result('a(x) = x * 42')) == '42 * x'
 
 #======================== Vars & funcs rewrite ===============================
 #======================== Polynomials ========================================

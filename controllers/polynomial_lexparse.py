@@ -255,7 +255,6 @@ class PolynomialInterpreter:
         self.str_expr = str_expr
         self.var_name = var_name
         self._get_reduced_form()
-        print(self.reduced_form)
 
     @property
     def str_expr(self):

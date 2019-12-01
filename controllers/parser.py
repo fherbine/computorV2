@@ -4,6 +4,7 @@ from controllers.lexer import BcLexer
 from controllers.ft_math import *
 from controllers.utils import MagicStr, exit_bc
 from controllers.polynomial_lexparse import PolynomialInterpreter
+from controllers.polynomials import PolyCalc
 
 
 def sanitize_result(expr):
@@ -87,17 +88,56 @@ class BcParser(Parser):
         self.is_function_body = is_function_body
 
     @_('assignement',
-       'get_statement')
+       'get_statement',
+       'eval_statement')
     def statement(self, parsed):
         return parsed[0]
 
+    @_('expr ASSIGN expr QMARK')
+    def eval_statement(self, parsed):
+        if not isinstance(parsed.expr0, Function):
+            raise SyntaxError('For equation first member should be a function')
+
+        if (
+            isinstance(parsed.expr1, Complex)
+            or isinstance(parsed.expr1, Matrix)
+        ):
+            raise TypeError(
+                'Cannot evaluate `{member}`.\nWrong type: {mtype}'.format(
+                    member=parsed.expr1.replace('\n', '\\n'),
+                    mtype=type(parsed.expr1).__name__,
+            ))
+
+        if not parsed[0].name.upper() in self.functions:
+            raise ValueError('%s is not defined' % parsed[0].name)
+
+        if isinstance(parsed.expr1, Complex):
+            raise TypeError('Cannot evaluate function equation w/Complex.')
+
+        function = self.functions[parsed[0].name.upper()]
+        unknown = function.args[0]
+
+        if isinstance(parsed.expr1, MagicStr):
+            magic_str = parsed.expr1
+
+            if str(unknown) != str(magic_str.unknown):
+                raise ValueError('Unknown numbers are not compatible.')
+
+        # else its compatible
+        if not isinstance(parsed.expr1, Function):
+            _tmp = Function('_tmp', [unknown], str(parsed.expr1))
+            _tmp.body = str(parsed.expr1)
+        else:
+            #FIXME: need a specific case
+            _tmp = parsed.expr1
+
+        calc = PolyCalc()
+        calc.simplify(function.reduced_form, _tmp.reduced_form)
+        return '\n'.join(calc.solve())
+
+
     @_('expr ASSIGN QMARK')
     def get_statement(self, parsed):
-        if (
-            isinstance(parsed.expr, MagicStr)
-            or isinstance(parsed.expr, Function)
-        ):
-            raise NameError('Cannot call `%s`.' % parsed.expr)
 
         return parsed.expr
 
@@ -124,7 +164,11 @@ class BcParser(Parser):
     # function calls
     @_('ID LPAREN expr RPAREN')
     def expr(self, parsed):
-        if parsed[0].upper() in self.functions:
+        if (
+            parsed[0].upper() in self.functions
+            and not isinstance(parsed.expr, MagicStr)
+        ):
+            #XXX: Do I have to support: `f(x) = ?` >> NO ?
             #Function already exists
             return self.functions[parsed[0].upper()].call([parsed[2]])
         else:

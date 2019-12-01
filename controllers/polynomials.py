@@ -1,3 +1,5 @@
+import re
+
 from controllers.ft_math import *
 
 AUTHORIZED_POLYNOMS = ['X^0', 'X^1', 'X^2']
@@ -70,10 +72,11 @@ class Solver:
             print('\u0394 is null')
             print('x1 = x2 = -b / (2a)')
             print(f'x1 = x2 = -{b} / (2 * {a})')
+            print('\n')
             return ('one', 'real', -b / (2*a))
         elif discriminant > 0:
             discriminant_sqrt = ft_sqrt(discriminant)
-            print('\u0394 is positive')
+            print('\n\u0394 is positive\n')
             print(
                 'x1 = -b - \u221a\u0394 / (2a)',
                 'x2 = -b + \u221a\u0394 / (2a)',
@@ -89,6 +92,7 @@ class Solver:
                 f'x2 = -{b} + {discriminant_sqrt} / (2 * {a})',
                 sep='; ',
             )
+            print('\n')
             return (
                 'two',
                 'real',
@@ -98,7 +102,7 @@ class Solver:
         else:
             # Complex solutions
             discriminant_sqrt = ft_sqrt(ft_abs(discriminant))
-            print('\u0394 is negative')
+            print('\n\u0394 is negative\n')
             print(
                 'x1 = -b - i\u221a|\u0394| / (2a)',
                 'x2 = -b + i\u221a|\u0394| / (2a)',
@@ -114,6 +118,7 @@ class Solver:
                 f'x2 = -{b} + i{discriminant_sqrt} / (2 * {a})',
                 sep='; ',
             )
+            print('\n')
             return (
                 'two',
                 'complex',
@@ -143,6 +148,7 @@ class PolyCalc:
         self.reduced_form = null_result_polynom
         self._check_operation_authorized_degree(left_operation)
         self._check_operation_authorized_degree(right_operation)
+        self._get_degree(null_result_polynom)
 
     def solve(self):
         solution = Solver().solve(self.reduced_form, self.degree)
@@ -203,6 +209,21 @@ class PolyCalc:
 
             if int_degree > self.degree:
                 raise Exception('Operaion is not conform with typed degree.')
+
+    def _get_degree(self, operation):
+        max_degree = 0
+
+        for degree, times in operation.items():
+            if times == 0:
+                continue
+
+            int_degrees = re.findall(r'\d+', degree)
+            int_degrees = list(map(int, int_degrees))
+
+            if int_degrees[0] > self.degree:
+                max_degree = int_degrees[0]
+
+        self.degree = max_degree
 
     def _check_operation_authorized_degree(self, operation):
         for degree, times in operation.items():
