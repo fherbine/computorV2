@@ -384,6 +384,8 @@ class BcParser(Parser):
         return parsed[0]
 
     def error(self, parsed):
-        raise SyntaxError(
-            'An error occurs while parsing. Before `%s`' % parsed.value
-        )
+        if parsed:
+            raise SyntaxError(
+                'An error occurs while parsing. Before `%s`' % parsed.value
+            )
+        raise SyntaxError('An error occurs while parsing.')
