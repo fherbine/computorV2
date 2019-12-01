@@ -86,6 +86,7 @@ class Function:
 
 
 class BcParser(Parser):
+    parsed_str = ''
     tokens = BcLexer.tokens
 
     precedence = (
@@ -210,6 +211,20 @@ class BcParser(Parser):
                 )
 
             self.variables[str(parsed[0]).upper()] = parsed[2]
+            return parsed[2]
+
+        var = re.findall('^[a-zA-Z]', self.parsed_str)
+
+        if var:
+            reassign = MagicStr(var[0])
+            #XXX: Hack reassign variable
+
+            if isinstance(parsed.expr1, MagicStr):
+                raise ValueError(
+                    'Trying to assign undefined value to variable.'
+                )
+
+            self.variables[str(reassign).upper()] = parsed[2]
             return parsed[2]
 
         raise SyntaxError(f'Cannot assign {parsed[2]} to {parsed[0]}')
