@@ -3,6 +3,7 @@ from sly import Parser
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
 from controllers.utils import MagicStr, exit_bc
+from controllers.polynomial_lexparse import PolynomialInterpreter
 
 
 def sanitize_result(expr):
@@ -11,6 +12,8 @@ def sanitize_result(expr):
     return expr
 
 class Function:
+    reduced_form = {}
+
     def __init__(self, name, args, body):
         self.name = name
         self.args = args
@@ -27,6 +30,10 @@ class Function:
 
         return parser.parse(lexer.tokenize(str(self.body)))
 
+    def simplify_body(self, value):
+        simplified_body = PolynomialInterpreter(value, self.args[0])
+        self.reduced_form = simplified_body.reduced_form
+        return str(simplified_body)
 
     @property
     def body(self):

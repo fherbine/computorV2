@@ -247,20 +247,32 @@ class PolyParser(Parser):
 
 
 class PolynomialInterpreter:
-    str_expr = ''
+    _str_expr = ''
+    var_name = ''
     reduced_form = {}
 
-    def __init__(self, str_expr):
+    def __init__(self, str_expr, var_name):
         self.str_expr = str_expr
+        self.var_name = var_name
+        self._get_reduced_form()
+        print(self.reduced_form)
 
-    def get_reduced_form(self):
+    @property
+    def str_expr(self):
+        return self._str_expr
+
+    @str_expr.setter
+    def str_expr(self, value):
+        self._str_expr = str(value)
+
+    def _get_reduced_form(self):
         lexer = PolyLexer()
         parser = PolyParser()
 
         if not self.str_expr:
             return
 
-        self.reduced_form = parser.parser(lexer.tokenize(self.str_expr))
+        self.reduced_form = parser.parse(lexer.tokenize(self.str_expr))
 
     def __str__(self):
         return self.dispatch()
@@ -275,19 +287,21 @@ class PolynomialInterpreter:
             if not value and (any(reduced_form.values()) or degree != 'X^0'):
                 continue
 
-            if degree == 'X^0':
-                formula = f'{value}'
+            if value < 0:
+                formula += '- ' if output else '-'
             else:
-                if value < 0:
-                    formula += '- ' if formula else '-'
-                else:
-                    formula += '+ ' if formula else ''
+                formula += '+ ' if output else ''
+
+            if degree == 'X^0':
+                formula += f'{value}'
+            else:
                 formula += str(ft_abs(value))
 
                 if degree == 'X^1':
-                    formula += f' * X'
+                    formula += f' * {self.var_name}'
                 else:
-                    formula += f' * {degree}'
+                    intdeg = degree.split('^')[-1]
+                    formula += f' * {self.var_name}^{intdeg}'
 
             output += formula
 
