@@ -1,4 +1,11 @@
+import os
 import sys
+
+def fancy_hello():
+    os.system('clear')
+    os.system('echo ComputorV2 | figlet | lolcat')
+    os.system('echo "by fherbine" | lolcat')
+    print('\n\n')
 
 def exit_bc():
     print('quit')

@@ -1,12 +1,14 @@
 from controllers.lexer import BcLexer
 from controllers.parser import BcParser
 from controllers.polynomial_lexparse import PolyLexer
-from controllers.utils import exit_bc
+from controllers.utils import exit_bc, fancy_hello
 
 if __name__ == '__main__':
     lexer = BcLexer()
     parser = BcParser()
     lex = PolyLexer()
+
+    fancy_hello()
 
     while True:
         try:

@@ -72,7 +72,7 @@ class Solver:
             print('\u0394 is null')
             print('x1 = x2 = -b / (2a)')
             print(f'x1 = x2 = -{b} / (2 * {a})')
-            print('\n')
+            print('')
             return ('one', 'real', -b / (2*a))
         elif discriminant > 0:
             discriminant_sqrt = ft_sqrt(discriminant)
@@ -92,7 +92,7 @@ class Solver:
                 f'x2 = -{b} + {discriminant_sqrt} / (2 * {a})',
                 sep='; ',
             )
-            print('\n')
+            print('')
             return (
                 'two',
                 'real',
@@ -118,7 +118,7 @@ class Solver:
                 f'x2 = -{b} + i{discriminant_sqrt} / (2 * {a})',
                 sep='; ',
             )
-            print('\n')
+            print('')
             return (
                 'two',
                 'complex',
