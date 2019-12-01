@@ -314,3 +314,8 @@ class BcParser(Parser):
        'FUNCS LPAREN RPAREN')
     def builtin_command(self, parsed):
         return parsed[0]
+
+    def error(self, parsed):
+        raise SyntaxError(
+            'An error occurs while parsing. Before `%s`' % parsed.value
+        )
