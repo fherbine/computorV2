@@ -137,7 +137,9 @@ class BcParser(Parser):
        'LBRCK expr RBRCK')
     def expr(self, parsed):
         if isinstance(parsed.expr, MagicStr):
-            return MagicStr('(%s)' % parsed.expr)
+            new_magic_str = MagicStr('(%s)' % parsed.expr)
+            new_magic_str.unknown = parsed.expr.unknown
+            return new_magic_str
         return parsed.expr
 
     #matrix handling
@@ -237,7 +239,7 @@ class BcParser(Parser):
     def expr(self, parsed):
         if parsed.ID.upper() in self.variables:
             return self.variables[parsed.ID.upper()]
-        return MagicStr(parsed.ID)
+        return MagicStr(parsed.ID, unknown=parsed.ID)
 
     @_('builtin_command')
     def statement(self, parsed):
