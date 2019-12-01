@@ -228,7 +228,10 @@ class Matrix:
         return self.__str__()
 
     def __str__(self):
-        return '\n'.join(map(str, self.matrix))
+        return '\n'.join(map(str, self.matrix)).replace('"', '')
+
+    def to_magic_str(self):
+        return '[%s]' % str(self).replace('\n', '; ')
 
     def __getitem__(self, key):
         return self.matrix[key]
@@ -281,16 +284,33 @@ Width of first Matrix should be equal to the height of the second one:
                     result = getattr(operator, operation)(a, elem)
                     final_matrix[-1].append(result)
 
-        return final_matrix
+        return Matrix(final_matrix)
 
     def __add__(self, elem):
         return self._do_matrix_operation(elem, 'add')
 
+    def __radd__(self, elem):
+        return self.__add__(elem)
+
     def __sub__(self, elem):
         return self._do_matrix_operation(elem, 'sub')
 
+    def __rsub__(self, elem):
+        if not isinstance(elem, Matrix):
+            #XXX: Not the better way to this just a lazy way.
+            x = self.x
+            y = self.y
+            elem = Matrix([[elem for _ in range(x)] for __ in range(y)])
+
+        return elem.__sub__(self)
+
+
     def __mul__(self, elem):
-        return self._do_matrix_operation(elem, 'mul')
+
+        if not isinstance(elem, Matrix):
+            return self._do_matrix_operation(elem, 'mul')
+
+        raise SyntaxError('You should use `**` for Matrix multiplications.')
 
     def __rmul__(self, elem):
         return self.__mul__(elem)
@@ -299,4 +319,10 @@ Width of first Matrix should be equal to the height of the second one:
         return self._do_matrix_operation(elem, 'truediv')
 
     def __rtruediv__(self, elem):
-        return self.__truediv__(elem)
+        if not isinstance(elem, Matrix):
+            #XXX: Not the better way to this just a lazy way.
+            x = self.x
+            y = self.y
+            elem = Matrix([[elem for _ in range(x)] for __ in range(y)])
+
+        return elem.__truediv__(self)

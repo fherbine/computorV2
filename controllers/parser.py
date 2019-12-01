@@ -37,7 +37,17 @@ class Function:
         if isinstance(value, str) and not value:
             raise ValueError('Function\'s body is empty.')
 
-        self._body = value
+        try:
+            #XXX: Try to find a proper cast to MagicStr
+            value = value.to_magic_str()
+        except:
+            pass
+
+        try:
+            self._body = self.simplify_body(value)
+        except:
+            #FIXME: Illegals for simplification
+            self._body = value
 
 
 class BcParser(Parser):
@@ -130,7 +140,7 @@ class BcParser(Parser):
             not isinstance(parsed.expr0, Matrix)
             or not isinstance(parsed.expr1, Matrix)
         ):
-            raise TypeError('Both expressions should be matrix for `**`.')
+            return parsed.expr0 * parsed.expr1
 
         return parsed.expr0.matrix_mul(parsed.expr1)
 

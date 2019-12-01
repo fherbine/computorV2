@@ -129,6 +129,93 @@ def test_get_one_dimension_matrix():
 def test_assign_two_dimension_matrix():
     assert str(get_line_result('[[4, 2]; [2,1]] = ?')) == '[4, 2]\n[2, 1]'
 
+def test_matrix_real_addition():
+    assert str(get_line_result(
+        '[[4, 2]; [2,1]] + 42 = ?'
+    )) == '[46, 44]\n[44, 43]'
+
+def test_real_matrix_addition():
+    assert str(get_line_result(
+        '42 + [[4, 2]; [2,1]] = ?'
+    )) == '[46, 44]\n[44, 43]'
+
+def test_matrix_real_substraction():
+    assert str(get_line_result(
+        '[[4, 2]; [2,1]] - 42 = ?'
+    )) == '[-38, -40]\n[-40, -41]'
+
+def test_real_matrix_substraction():
+    assert str(get_line_result(
+        '42 - [[4, 2]; [2,1]] = ?'
+    )) == '[38, 40]\n[40, 41]'
+
+def test_matrix_real_multiplication():
+    assert str(get_line_result(
+        '[[4, 2]; [2,1]] ** 2 = ?'
+    )) == '[8, 4]\n[4, 2]'
+
+def test_real_matrix_multiplication():
+    assert str(get_line_result(
+        '2 ** [[4, 2]; [2,1]] = ?'
+    )) == '[8, 4]\n[4, 2]'
+
+def test_matrix_real_division():
+    assert str(get_line_result(
+        '[[4, 2]; [2,1]] / 2 = ?'
+    )) == '[2.0, 1.0]\n[1.0, 0.5]'
+
+def test_real_matrix_division():
+    assert str(get_line_result(
+        '2 / [[4, 2]; [2,1]] = ?'
+    )) == '[0.5, 1.0]\n[1.0, 2.0]'
+
+def test_matrix_add_matrix():
+    res = bc_repl(
+        'a = [[2, 3]; [6, 7]]',
+        'b = [[4, 2]; [1, 8]]',
+        'a + b = ?',
+    )
+    assert str(res) == '[6, 5]\n[7, 15]'
+
+def test_matrix_sub_matrix():
+    res = bc_repl(
+        'a = [[2, 3]; [6, 7]]',
+        'b = [[4, 2]; [1, 8]]',
+        'a - b = ?',
+    )
+    assert str(res) == '[-2, 1]\n[5, -1]'
+
+def test_matrix_div_matrix():
+    res = bc_repl(
+        'a = [[2, 3]; [6, 8]]',
+        'b = [[4, 2]; [1, 16]]',
+        'a / b = ?',
+    )
+    assert str(res) == '[0.5, 1.5]\n[6.0, 0.5]'
+
+def test_matrix_mul_matrix():
+    res = bc_repl(
+        'a = [[1, 0]; [2, -1]]',
+        'b = [[3, 4]; [-2, -3]]',
+        'a ** b = ?',
+    )
+    assert str(res) == '[3, 4]\n[8, 11]'
+
+def test_matrix_mul_matrix_2():
+    res = bc_repl(
+        'a = [[1, 2, 0]; [4, 3, -1]]',
+        'b = [[5, 1]; [2, 3]; [3, 4]]',
+        'a ** b = ?',
+    )
+    assert str(res) == '[9, 7]\n[23, 9]'
+
+def test_matrix_mul_matrix_3():
+    res = bc_repl(
+        'a = [[1, 2, 0]; [4, 3, -1]]',
+        'b = [[5, 1]; [2, 3]; [3, 4]]',
+        'b ** a = ?',
+    )
+    assert str(res) == '[9, 13, -1]\n[14, 13, -3]\n[19, 18, -4]'
 
 #======================== composed operation =================================
 
