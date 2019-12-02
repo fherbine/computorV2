@@ -5,7 +5,7 @@ class BcLexer(Lexer):
     tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
                LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
                SEMICOLON, COMMA, NUMBER, POWER, INTDIV, QUIT,
-               VARS, FUNCS, MATRIX_TIMES }
+               VARS, FUNCS, MATRIX_TIMES, DRAW }
 
     ignore = ' \t'
 
@@ -21,6 +21,7 @@ class BcLexer(Lexer):
     ID['quit'] = QUIT
     ID['vars'] = VARS
     ID['funcs'] = FUNCS
+    ID['draw'] = DRAW
     LPAREN = r'\('
     RPAREN = r'\)'
     LBRCK = r'\['

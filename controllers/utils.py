@@ -7,6 +7,41 @@ def fancy_hello():
     os.system('echo "by fherbine" | lolcat')
     print('\n\n')
 
+def draw(functions):
+    while True:
+        function = input(
+            'Fonction identifier %s: ' % [k.lower() for k in functions.keys()]
+        )
+
+        if function.upper() in functions:
+            break
+        print('Unknown function %s' % function)
+
+    function = functions[function.upper()]
+
+    formula = '[({arg}, {body}) for {arg} in range%s]'.format(
+        arg=function.args[0],
+        body=str(function.body).replace('^', '**'),
+    )
+
+    default = input('use default param [Y/n]:').upper() != 'N'
+    kwargs = {}
+
+    while not default:
+        try:
+            kwargs = {
+                'xmin': int(input('xmin: ')),
+                'xmax': int(input('xmax: ')),
+                'ymin': int(input('ymin: ')),
+                'ymax': int(input('ymax: ')),
+            }
+            break
+        except:
+            print('min/max value must be integer.')
+            continue
+
+    return 'draw', formula, kwargs
+
 def exit_bc():
     print('quit')
     sys.exit(0)

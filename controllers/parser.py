@@ -4,7 +4,7 @@ from sly import Parser
 
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
-from controllers.utils import MagicStr, exit_bc
+from controllers.utils import MagicStr, exit_bc, draw
 from controllers.polynomial_lexparse import PolynomialInterpreter
 from controllers.polynomials import PolyCalc
 
@@ -375,10 +375,22 @@ class BcParser(Parser):
             out = '\n'.join(
                 [f'{f.name}({f.args}): {f.body}' for f in self.functions.values()]
             )
+        elif cmd == 'draw':
+            filtered_funcs = {
+                fname: func for fname, func in self.functions.items() if (
+                    not func.matrix_in_body and not func.complex_in_body
+                )
+            }
+
+            if not filtered_funcs:
+                raise ValueError('There\'s nothing to dispatch')
+
+            out = draw(filtered_funcs)
         return out
 
     @_('QUIT LPAREN RPAREN',
        'VARS LPAREN RPAREN',
+       'DRAW LPAREN RPAREN',
        'FUNCS LPAREN RPAREN')
     def builtin_command(self, parsed):
         return parsed[0]
