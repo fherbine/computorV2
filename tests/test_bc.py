@@ -17,6 +17,7 @@ def get_line_result(line, **kwargs):
     else:
         lexer, parser = BcLexer(), BcParser()
 
+    parser.parsed_str = line
     return parser.parse(lexer.tokenize(line))
 
 def bc_repl(*lines):

@@ -213,7 +213,7 @@ class BcParser(Parser):
             self.variables[str(parsed[0]).upper()] = parsed[2]
             return parsed[2]
 
-        var = re.findall('^[a-zA-Z]', self.parsed_str)
+        var = re.findall('^(?![iI])[a-zA-Z]+', self.parsed_str)
 
         if var:
             reassign = MagicStr(var[0])
@@ -241,7 +241,21 @@ class BcParser(Parser):
             return self.functions[parsed[0].upper()].call([parsed[2]])
         else:
             #Create a new function
-            return Function(parsed[0], [parsed[2]], '')
+            #XXX: Hack for arg
+            arg = re.findall('^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)', self.parsed_str)
+
+            if not arg:
+                raise SyntaxError('Syntax error, cannot evaluate.')
+
+            arg = re.findall('\([a-zA-Z]+\)', arg[0])
+
+            if not arg:
+                raise SyntaxError('Syntax error, cannot evaluate.')
+
+            arg = re.findall('[a-zA-Z]+', arg[0])
+
+
+            return Function(parsed[0], arg, '')
 
 
     #uncompress paren / brackets for expr
@@ -373,7 +387,7 @@ class BcParser(Parser):
             )
         elif cmd == 'funcs':
             out = '\n'.join(
-                [f'{f.name}({f.args}): {f.body}' for f in self.functions.values()]
+                [f'{f.name}({f.args[0]}): {f.body}' for f in self.functions.values()]
             )
         elif cmd == 'draw':
             filtered_funcs = {
