@@ -24,15 +24,18 @@ Todos:
 
 **MANDATORY**
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
+    - [x] variables handling
+    - [x] functions handling
+    - [x] complex handling
+    - [x] matrix handling
 - [x] Math lib
 - [ ] Documentation
-- [ ] complex raised to the power
 
 **Bonus**
-- [ ] Unittests
-- [ ] Function curve display (Kivy)
-- [ ] Added usual functions
+- [x] Unittests
+- [x] Function curve display (Kivy)
+- [x] Added usual functions
 - [ ] Radian computation for angles
 - [ ] Function composition
 - [ ] Norm computation
@@ -40,5 +43,8 @@ Todos:
 - [ ] Matrix inversion
 - [ ] An extension of the matrix computation applied to vector computation
 - [x] Integer divs (floordivs)
-- [ ] Others (cmds: quit, help, stored vars, ...)
+- [x] Others (cmds: quit, help, stored vars, ...)
     - [x] quit
+    - [x] vars
+    - [x] funcs
+    - [x] draw
