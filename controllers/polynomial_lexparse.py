@@ -235,6 +235,10 @@ class PolyParser(Parser):
         return -parsed.expr
 
     @_('LPAREN expr RPAREN')
+    def xerr(self, p):
+        self.error()
+
+    @_('LPAREN expr RPAREN')
     def expr(self, parsed):
         return parsed.expr
 

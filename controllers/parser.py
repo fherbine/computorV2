@@ -81,7 +81,6 @@ class Function:
         try:
             self._body = self.simplify_body(value)
         except:
-            #FIXME: Illegals for simplification
             self._body = value
 
 
@@ -162,7 +161,6 @@ class BcParser(Parser):
             _tmp = Function('_tmp', [unknown], str(parsed.expr1))
             _tmp.body = str(parsed.expr1)
         else:
-            #FIXME: need a specific case
             if not parsed.expr1.name.upper() in self.functions:
                 raise ValueError('%s is not defined' % parsed.expr1.name)
 
