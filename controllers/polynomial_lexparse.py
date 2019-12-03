@@ -288,6 +288,7 @@ class PolynomialInterpreter:
 
             if value < 0:
                 formula += '- ' if output else '-'
+                value = ft_abs(value)
             else:
                 formula += '+ ' if output else ''
 

@@ -1,6 +1,7 @@
 """Main test file for Computor V2.
 """
 
+import re
 import pytest
 
 from controllers.lexer import BcLexer
@@ -17,6 +18,7 @@ def get_line_result(line, **kwargs):
     else:
         lexer, parser = BcLexer(), BcParser()
 
+    line = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', line)
     parser.parsed_str = line
     return parser.parse(lexer.tokenize(line))
 
@@ -437,6 +439,37 @@ def test_equation_not_compatible_funcs_unknown():
             'b(y) = y',
             'f(x) = b(y) ?'
         )
+#============================== Subject =======================================
+
+def test_sub_1():
+    assert get_line_result('varA = 2') == 2
+
+def test_sub_2():
+    assert get_line_result('varA = 2.242') == 2.242
+
+def test_sub_3():
+    assert get_line_result('varA = -4.3') == -4.3
+
+def test_sub_4():
+    assert str(get_line_result('varA = 2*i + 3')) == '(3 + 2i)'
+
+def test_sub_5():
+    assert str(get_line_result('varA = -4i - 4')) == '(-4 - 4i)'
+
+def test_sub_6():
+    assert str(get_line_result('varA = [[2,3];[4,3]]')) == '[2, 3]\n[4, 3]'
+
+def test_sub_7():
+    assert str(get_line_result('varA = [[3,4]]')) == '[3, 4]'
+
+def test_sub_8():
+    assert str(get_line_result('funA(x) = 2*x^5 + 4x^2 - 5*x + 4')) == '2 * x^5 + 4 * x^2 - 5 * x + 4'
+
+def test_sub_9():
+    assert str(get_line_result('funB(y) = 43 * y / (4 % 2 * y)')) == '43 * y / (0 * y)'
+
+def test_sub_10():
+    assert str(get_line_result('funC(z) = -2 * z - 5')) == '-2 * z - 5'
 
 #------------------------ BONUS ==============================================
 

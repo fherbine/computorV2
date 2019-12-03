@@ -1,4 +1,5 @@
 import queue
+import re
 import threading
 
 from controllers.lexer import BcLexer
@@ -52,6 +53,8 @@ if __name__ == '__main__':
 
         if data:
             try:
+                #XXX: Hack for implicits times
+                data = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', data)
                 parser.parsed_str = data
                 result = parser.parse(lexer.tokenize(data))
 
