@@ -109,6 +109,9 @@ class _TestLexer(CoreLexer):
         token.value = int(token.value)
         return token
 
+    def error(self, token):
+        raise SyntaxError('Unknown char tok %s' % token.value[0])
+
 if __name__ == '__main__':
     lexer = _TestLexer()
 
@@ -116,4 +119,7 @@ if __name__ == '__main__':
         data = input('> ')
 
         if data:
-            print(list(lexer.tokenize(data)))
+            try:
+                print(list(lexer.tokenize(data)))
+            except Exception as e:
+                print(e)
