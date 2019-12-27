@@ -57,6 +57,11 @@ class MagicStr:
     def __str__(self):
         return self.string
 
+    def __neg__(self):
+        #XXX: Hack to work w/unary minus and my own core parser
+        unknown = self.unknown
+        return MagicStr(f'-{self.string}', unknown)
+
     def _do_magic_operation(self, elem, op, reverse=False):
         unknown = self.unknown
 

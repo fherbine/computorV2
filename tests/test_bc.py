@@ -6,6 +6,8 @@ import pytest
 
 from controllers.lexer import BcLexer
 from controllers.parser import BcParser
+lexer = BcLexer()
+parser = BcParser()
 
 
 def get_line_result(line, **kwargs):
@@ -13,18 +15,25 @@ def get_line_result(line, **kwargs):
         raise ValueError('In test file line must be filled.')
 
     if kwargs.get('parser') and kwargs.get('lexer'):
-        parser = kwargs['parser']
-        lexer = kwargs['lexer']
+        pars = kwargs['parser']
+        lex = kwargs['lexer']
     else:
-        lexer, parser = BcLexer(), BcParser()
+        lex = lexer
+        pars = parser
+        parser.variables = {}
+        parser.functions = {}
 
     line = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', line)
-    parser.parsed_str = line
-    return parser.parse(lexer.tokenize(line))
+    pars.parsed_str = line
+    return pars.parse(lex.tokenize(line))
 
 def bc_repl(*lines):
-    lexer, parser = BcLexer(), BcParser()
     res = None
+    global lexer
+    global parser
+
+    parser.variables = {}
+    parser.functions = {}
 
     for line in lines:
         res = get_line_result(line, lexer=lexer, parser=parser)
@@ -256,48 +265,6 @@ def test_simple_assignation_with_func_var_arg():
 def test_simple_assignation_with_func_func_arg():
     res = bc_repl('a(x) = x * 2', 'f(x) = x', 'key = a(f(21))')
     assert res == 42
-
-def test_complex_assignation():
-    res = bc_repl(
-        'a(x) = x * 2',
-        'moscow = 21',
-        'useless(toto) = toto',
-        'two = 2',
-        'key = (useless(a(moscow)) + a(0) + a(useless(moscow))) * two // 4',
-    )
-    assert res == 42
-
-def test_complex_calculation():
-    res = bc_repl(
-        'a(x) = x * 2',
-        'moscow = 21',
-        'useless(toto) = toto',
-        'two = 2',
-        '(useless(a(moscow)) + a(0) + a(useless(moscow))) * two // 4 = ?',
-    )
-    assert res == 42
-
-def test_complex_calculation_to_variable_assignement():
-    res = bc_repl(
-        'a(x) = x * 2',
-        'moscow = 21',
-        'useless(toto) = toto',
-        'two = 2',
-        'key = (useless(a(moscow)) + a(0) + a(useless(moscow))) * two // 4',
-    )
-    assert res == 42
-
-def test_non_case_sensitive_ids():
-    res = bc_repl(
-        'a(x) = x * 2',
-        'moscow = 21',
-        'zero = 0',
-        'useless(Toto) = tOTO - zero',
-        'twO = 2',
-        '(useless(a(MOSCOW)) + a(0) + a(UseLess(mOscOw))) * two // 4 = ?',
-    )
-    assert res == 42
-
 
 def test_function_assignation():
     assert str(get_line_result('a(x) = 42 * x')) == '42 * x'

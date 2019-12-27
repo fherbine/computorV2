@@ -1,11 +1,11 @@
-from sly import Lexer
+from core.lexer import CoreLexer
 
 
-class BcLexer(Lexer):
-    tokens = { ADD, MINUS, TIMES, DIVIDE, ASSIGN, ID, IMAG,
-               LPAREN, RPAREN, LBRCK, RBRCK, MODULO, QMARK,
-               SEMICOLON, COMMA, NUMBER, POWER, INTDIV, QUIT,
-               VARS, FUNCS, MATRIX_TIMES, DRAW }
+class BcLexer(CoreLexer):
+    tokens = [ 'ADD', 'MINUS', 'MATRIX_TIMES', 'TIMES', 'INTDIV', 'DIVIDE',
+               'ASSIGN', 'IMAG', 'LPAREN', 'RPAREN', 'LBRCK', 'RBRCK',
+               'MODULO', 'QMARK', 'SEMICOLON', 'COMMA', 'NUMBER', 'POWER',
+               'QUIT', 'VARS', 'FUNCS', 'DRAW', 'ID']
 
     ignore = ' \t'
 
@@ -16,31 +16,32 @@ class BcLexer(Lexer):
     INTDIV = r'//'
     DIVIDE = r'/'
     ASSIGN = r'='
-    IMAG = r'[iI]'
+    QUIT = r'quit'
+    VARS = r'vars'
+    FUNCS = r'funcs'
+    DRAW = r'draw'
     ID = r'[A-Za-z]+'
-    ID['quit'] = QUIT
-    ID['vars'] = VARS
-    ID['funcs'] = FUNCS
-    ID['draw'] = DRAW
+    IMAG = r'[iI]'
+
     LPAREN = r'\('
     RPAREN = r'\)'
     LBRCK = r'\['
     RBRCK = r'\]'
     MODULO = r'%'
-    QMARK = '\?'
+    QMARK = r'\?'
     COMMA = r','
     SEMICOLON = r';'
     NUMBER = r'(?:[0-9]*\.)?[0-9]+'
     POWER = r'\^'
 
-    def NUMBER(self, token):
+    def token_NUMBER(self, token):
         if float(token.value).is_integer():
             token.value = int(float(token.value))
         else:
             token.value = float(token.value)
         return token
 
-    def ID(self, token):
+    def token_ID(self, token):
         token.value = token.value
         return token
 

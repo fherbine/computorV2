@@ -183,6 +183,9 @@ class Complex:
     def __rmod__(self, _):
         raise TypeError('Cannot do a modulo with Complex object')
 
+    def __neg__(self):
+        #XXX: Hack to work w/unary minus and my own core parser
+        return Complex(self.r, -self.i)
 
 class Matrix:
     def __init__(self, value):

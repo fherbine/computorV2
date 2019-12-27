@@ -120,7 +120,9 @@ class LiteralBnfRule:
         statement_len = len(statement)
 
         for index in range(len(self)):
-            potential_statement = LiteralBnfRule(' '.join(self[index:index+statement_len]))
+            potential_statement = LiteralBnfRule(
+                ' '.join(self[index:index+statement_len])
+            )
 
             if potential_statement == statement:
                 return index
@@ -208,7 +210,15 @@ class CoreParser2:
         new_value = production.method(self, parsed_items)
 
         if DEBUG:
-            print('call', statement_key, parsed_items, 'new_val: ', new_value, 'new_id:', new_identifier)
+            print(
+                'call',
+                statement_key,
+                parsed_items,
+                'new_val: ',
+                new_value,
+                'new_id:',
+                new_identifier,
+            )
 
         return ParsedItem(new_identifier, new_value)
 

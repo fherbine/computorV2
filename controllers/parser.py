@@ -1,6 +1,6 @@
 import re
 
-from sly import Parser
+from core.parser import CoreParser, _
 
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
@@ -84,17 +84,17 @@ class Function:
             self._body = value
 
 
-class BcParser(Parser):
+class BcParser(CoreParser):
     parsed_str = ''
     tokens = BcLexer.tokens
 
     precedence = (
-        ('left', QMARK),
-        ('left', MINUS, ADD),
-        ('left', TIMES, DIVIDE, INTDIV, MODULO, MATRIX_TIMES),
-        ('left', POWER),
-        ('left', IMAG),
-        ('right', UMINUS),
+        ('left', 'MINUS', 'ADD'),
+        ('left', 'TIMES', 'DIVIDE', 'INTDIV', 'MODULO', 'MATRIX_TIMES'),
+        ('left', 'LPAREN', 'RPAREN'),
+        ('left', 'POWER'),
+        ('left', 'IMAG'),
+        ('right', 'UMINUS'),
     )
 
     def __init__(self, is_function_body=False):
@@ -110,6 +110,7 @@ class BcParser(Parser):
             ...
         }
         """
+        super().__init__()
         self.variables = {}
         self.functions = {}
         self.is_function_body = is_function_body
@@ -228,19 +229,22 @@ class BcParser(Parser):
         raise SyntaxError(f'Cannot assign {parsed[2]} to {parsed[0]}')
 
     # function calls
-    @_('ID LPAREN expr RPAREN')
+    @_('expr LPAREN expr RPAREN')
     def expr(self, parsed):
         if (
-            parsed[0].upper() in self.functions
-            and not isinstance(parsed.expr, MagicStr)
+            str(parsed[0]).upper() in self.functions
+            and not isinstance(parsed.expr1, MagicStr)
         ):
             #XXX: Do I have to support: `f(x) = ?` >> NO ?
             #Function already exists
-            return self.functions[parsed[0].upper()].call([parsed[2]])
+            return self.functions[str(parsed[0]).upper()].call([parsed[2]])
         else:
             #Create a new function
             #XXX: Hack for arg
-            arg = re.findall('^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)', self.parsed_str)
+            arg = re.findall(
+                '^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)',
+                self.parsed_str,
+            )
 
             if not arg:
                 raise SyntaxError('Syntax error, cannot evaluate.')
@@ -253,7 +257,7 @@ class BcParser(Parser):
             arg = re.findall('[a-zA-Z]+', arg[0])
 
 
-            return Function(parsed[0], arg, '')
+            return Function(str(parsed[0]), arg, '')
 
 
     #uncompress paren / brackets for expr

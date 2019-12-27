@@ -1,10 +1,11 @@
-from sly import Lexer, Parser
+from core.lexer2 import CoreLexer2
+from core.parser2 import CoreParser2, _
 
 from controllers.ft_math import ft_power, ft_abs
 
-class PolyLexer(Lexer):
-    tokens = { NUMBER, ADD, MINUS, TIMES, DIVIDE, LPAREN,
-               RPAREN, X, POWER }
+class PolyLexer(CoreLexer2):
+    tokens = [ 'NUMBER', 'ADD', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN',
+               'RPAREN', 'X', 'POWER' ]
 
 
     ignore = ' \t'
@@ -20,41 +21,42 @@ class PolyLexer(Lexer):
     X = r'[A-Za-z]+(?:\^[0-9]+)?'
     POWER = r'\^'
 
-    def NUMBER(self, token):
+    def token_NUMBER(self, token):
         if '.' in token.value:
             token.value = float(token.value)
         else:
             token.value = int(token.value)
         return token
 
-    def X(self, token):
+    def token_X(self, token):
         value = token.value.split('^')
         power = value[-1] if len(value) == 2 else 1
 
         token.value = f'X^{power}'
         return token
 
-    def I(self, token):
+    def token_I(self, token):
         raise TypeError('Complex numbers are illegal for polynomial equation.')
 
-    def error(self, token):
+    def token_error(self, token):
         raise SyntaxError('Illegal character: `%s`' % token.value[0])
         self.index += 1
 
 
-class PolyParser(Parser):
+class PolyParser(CoreParser2):
     tokens = PolyLexer.tokens
 
     precedence = (
-        ('left', ADD, MINUS),
-        ('left', X),
-        ('left', TIMES, DIVIDE),
-        ('left', POWER),
-        ('right', UMINUS),
-        ('right', UMINX)
+        ('left', 'ADD', 'MINUS'),
+        ('left', 'X'),
+        ('left', 'TIMES', 'DIVIDE'),
+        ('left', 'POWER'),
+        ('right', 'UMINUS'),
+        ('right', 'UMINX')
     )
 
     def __init__(self):
+        super().__init__()
         self.degrees = {}
 
     def filter_results(self):

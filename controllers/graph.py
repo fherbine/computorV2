@@ -14,7 +14,11 @@ def reset_window():
 
     if not EventLoop.event_listeners:
         from kivy.cache import Cache
-        window.Window = window.core_select_lib('window', window.window_impl, True)
+        window.Window = window.core_select_lib(
+            'window',
+            window.window_impl,
+            True,
+        )
 
         for cat in Cache._categories:
             Cache._objects[cat] = {}
