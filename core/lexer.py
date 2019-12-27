@@ -77,7 +77,6 @@ class CoreLexer:
     def __new__(cls, *args, **kwargs):
         for token in cls.tokens:
             cls._regex_map[token] = getattr(cls, token)
-            delattr(cls, token)
 
         return super().__new__(cls, *args, **kwargs)
 

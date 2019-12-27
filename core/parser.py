@@ -1,10 +1,12 @@
+import copy
 import re
 from collections import namedtuple
 
-from lexer import Token
+from core.lexer import Token
 
 BNF_GRAMAR_RULES = []
 RULES = {}
+DEBUG = False
 Production = namedtuple('Production', ['returned_type', 'method'])
 
 class ParserError(Exception):
@@ -98,7 +100,7 @@ class LiteralBnfRule:
         return self.string.split(' ')[index]
 
     def __contains__(self, rule):
-        return '%s' % rule in self.string
+        return '%s' % rule in self.string.split(' ')
 
     def __eq__(self, other):
         if not isinstance(other, LiteralBnfRule):
@@ -112,6 +114,9 @@ class LiteralBnfRule:
                 return index
 
     def search(self, statement):
+        if isinstance(statement, str):
+            statement = LiteralBnfRule(statement)
+
         statement_len = len(statement)
 
         for index in range(len(self)):
@@ -202,6 +207,9 @@ class CoreParser:
         new_identifier = production.returned_type
         new_value = production.method(self, parsed_items)
 
+        if DEBUG:
+            print('call', statement_key, parsed_items, 'new_val: ', new_value, 'new_id:', new_identifier)
+
         return ParsedItem(new_identifier, new_value)
 
     def _resolve_single_item(self, item):
@@ -249,64 +257,97 @@ class CoreParser:
 
                     break
 
-        for prec in reversed(self.precedence):
+        index = None
+        match_rule = None
+        operator_levels = []
+
+        for prec_level, prec in enumerate(reversed(self.precedence)):
             side, *operators = prec
             with_prec = ''
 
             if side == 'right':
                 continue
 
+            available_statements = []
+
             for operator in operators:
-                if operator in literal:
-                    operator_index = literal.index(operator)
-                    available_statements = [statement for statement in BNF_GRAMAR_RULES if operator in statement]
+                available_statements += [(prec_level, statement) for statement in BNF_GRAMAR_RULES if operator in statement and operator in literal]
+                operator_levels.append((prec_level, operator))
 
-                    for statement in available_statements:
-                        statement_index = literal.search(statement)
+            operator_index = literal.index(operator)
 
-                        if statement_index is None:
-                            continue
+            for statement_level, statement in available_statements:
+                statement_index = literal.search(statement)
 
-                        left_prec = potential_prec
+                if statement_index is None:
+                    continue
 
-                        if left_prec:
-                            left_idx = left_prec[1]
+                if index is None or statement_index < index:
+                    index = statement_index
+                    match_rule = (statement, statement_index, with_prec)
 
-                            if left_idx < statement_index:
-                                statement, statement_index, with_prec = left_prec
+            if match_rule:
+                self._resolve_first_selected_statement(*match_rule)
+                return
 
-                        self._resolve_first_selected_statement(statement, statement_index, with_prec)
-                        return
+        index = None
+        previous_len = None
+        possible_solution = -1
 
-
-
-        for statement in self._not_prec_rules:
-            statement_index = literal.search(statement)
+        for _statement in self._not_prec_rules:
+            #FIXME: Need to search for the lower index
+            statement_index = literal.search(_statement)
 
             if statement_index is None:
                 continue
 
-            left_prec = potential_prec
+            statement_return = RULES[str(_statement)].returned_type
+            statement_possible_solution = len([_ for _ in RULES if statement_return in LiteralBnfRule(_)])
 
-            if left_prec:
-                left_idx = left_prec[1]
-                statement, statement_index, with_prec = left_prec
+            if index is None or (statement_index < index or statement_possible_solution > possible_solution) and statement_possible_solution > 1:
+                index = statement_index
+                statement = _statement
+                possible_solution = statement_possible_solution
+                previous_len = len(_statement)
 
-            self._resolve_first_selected_statement(statement, statement_index, with_prec)
+        left_prec = potential_prec
+
+        if left_prec:
+            left_idx = left_prec[1]
+            left_stmt = left_prec[0]
+            pr = left_prec[-1]
+            statement_return = RULES[str(left_stmt) + pr].returned_type
+            statement_possible_solution = len([_ for _ in RULES if statement_return in LiteralBnfRule(_)])
+
+            if left_idx < index or (statement_possible_solution > possible_solution and possible_solution <= 1):
+                statement, index, with_prec = left_prec
+
+        if index is None:
             return
+
+        self._resolve_first_selected_statement(statement, index, with_prec)
+        return
 
     def _resolve_stack(self):
-        if len(self._items_stack) == 1:
-            return
+        if len(self._items_stack) == 1 and self._items_stack[0].identifier not in list(RULES.keys()):
+            return bool(self._items_stack[0].identifier not in self.tokens)
 
-        cmp_stack = self._items_stack
+        cmp_stack = copy.copy(self._items_stack)
+
+        if DEBUG:
+            print('[0] statements stack:', self._statements_stack)
 
         self._items_stack = [self._resolve_single_item(item) for item in self._items_stack]
+
         self._statements_stack = [item.identifier for item in self._items_stack]
+        if DEBUG:
+            print('[1] statements stack:', self._statements_stack)
         self._resolve_multiple_items()
 
         if cmp_stack == self._items_stack:
             #XXX: Hack to raise error + nothing passed not like in sly
+            if DEBUG:
+                print('statements stack:', self._statements_stack, 'itm stck', self._items_stack)
             self.error(None)
 
         return self._resolve_stack()
@@ -320,13 +361,16 @@ class CoreParser:
             if token.token_type not in self.tokens:
                 raise ParserError('Cannot find token %s' % token.token_type)
 
-            #if not self._is_identifier_in_bnf_rules(parsed_item):
-            #    raise ParserError('Nothing to be done with %s' % parsed_item)
-
             self._items_stack.append(parsed_item)
             self._statements_stack.append(parsed_item.identifier)
 
-        self._resolve_stack()
+        if DEBUG:
+            print('statements stack:', self._statements_stack, 'itm stck', self._items_stack)
+
+        resolved = self._resolve_stack()
+
+        if not resolved:
+            self.error(None)
 
         return self._items_stack[0].value
 
