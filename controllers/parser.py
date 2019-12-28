@@ -373,7 +373,20 @@ class BcParser(CoreParser):
     # calling ID (var/func)
     @_('ID')
     def expr(self, parsed):
-        if parsed.ID.upper() in self.variables:
+        #XXX: Hack for arg
+        arg = re.findall(
+            '^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)',
+            self.parsed_str,
+        )
+
+        if arg:
+            arg = re.findall('\([a-zA-Z]+\)', arg[0])
+            if arg:
+                arg = re.findall('[a-zA-Z]+', arg[0])[0].upper()
+
+        arg = arg if arg else ''
+
+        if parsed.ID.upper() in self.variables and parsed.ID.upper() != arg:
             return self.variables[parsed.ID.upper()]
         return MagicStr(parsed.ID, unknown=parsed.ID)
 
