@@ -11,6 +11,8 @@ from controllers.polynomial_lexparse import PolyLexer
 from controllers.utils import exit_bc, fancy_hello
 from controllers.graph import FunGraphApp, reset_window
 
+FORCE_DRAW = False
+
 class GraphThread(threading.Thread):
     def __init__(self, formula_queue, response_queue):
         self.formula_queue = formula_queue
@@ -26,7 +28,7 @@ class GraphThread(threading.Thread):
             except queue.Empty:
                 continue
 
-            if platform == 'macosx':
+            if platform == 'macosx' and not FORCE_DRAW:
                 self.response_queue.put(
                     'Sorry you cannot use this command on %s' % platform
                 )
