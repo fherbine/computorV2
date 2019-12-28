@@ -6,7 +6,7 @@ from core.lexer2 import Token
 
 BNF_GRAMAR_RULES = []
 RULES = {}
-DEBUG = True
+DEBUG = False
 Production = namedtuple('Production', ['returned_type', 'method'])
 
 class ParserError(Exception):
