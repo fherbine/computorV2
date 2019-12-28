@@ -177,10 +177,12 @@ class PolyParser(CoreParser2):
 
     @_('X MINUS expr',
        'expr MINUS X')
-    def expr(self, parsed):
+    def xexpr(self, parsed):
         self.degrees.setdefault(parsed.X, [])
         self.degrees[parsed.X].append(1)
-        return -parsed.expr
+        self.degrees.setdefault('X^0', [])
+        self.degrees['X^0'].append(-parsed.expr)
+        return (parsed.X, 1, len(self.degrees[parsed.X]) - 1)
 
     @_('X ADD X')
     def xexpr(self, parsed):
