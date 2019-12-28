@@ -364,6 +364,9 @@ class CoreParser:
 
     def _resolve_stack(self):
         if len(self._items_stack) == 1 and self._items_stack[0].identifier not in list(RULES.keys()):
+            for rule in RULES:
+                if self._items_stack[0].identifier in LiteralBnfRule(rule):
+                    self.error(None)
             return bool(self._items_stack[0].identifier not in self.tokens)
 
         cmp_stack = copy.copy(self._items_stack)
