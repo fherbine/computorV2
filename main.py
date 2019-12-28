@@ -1,5 +1,6 @@
 import queue
 import re
+import time
 import threading
 
 from kivy.utils import platform
@@ -11,8 +12,9 @@ from controllers.utils import exit_bc, fancy_hello
 from controllers.graph import FunGraphApp, reset_window
 
 class GraphThread(threading.Thread):
-    def __init__(self, formula_queue):
+    def __init__(self, formula_queue, response_queue):
         self.formula_queue = formula_queue
+        self.response_queue = response_queue
         self.app = None
 
         super().__init__(daemon=True)
@@ -25,7 +27,9 @@ class GraphThread(threading.Thread):
                 continue
 
             if platform == 'macosx':
-                print('Sorry you cannot use this command on %s' % platform)
+                self.response_queue.put(
+                    'Sorry you cannot use this command on %s' % platform
+                )
                 continue
 
             reset_window()
@@ -38,13 +42,25 @@ if __name__ == '__main__':
     parser = BcParser()
     lex = PolyLexer()
     formula_queue = queue.Queue()
+    response_queue = queue.Queue()
 
     #Thread to draw functions graphs.
-    graph_thread = GraphThread(formula_queue).start()
+    graph_thread = GraphThread(formula_queue, response_queue).start()
 
     fancy_hello()
 
     while True:
+        time.sleep(.1)
+
+        try:
+            thread_response = response_queue.get_nowait()
+        except queue.Empty:
+            thread_response = None
+            pass
+
+        if thread_response:
+            print(thread_response)
+
         try:
             data = input('> ')
         except KeyboardInterrupt:
