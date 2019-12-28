@@ -91,7 +91,7 @@ class BcParser(CoreParser):
     precedence = (
         ('left', 'MINUS', 'ADD'),
         ('left', 'TIMES', 'DIVIDE', 'INTDIV', 'MODULO', 'MATRIX_TIMES'),
-        ('left', 'LPAREN', 'RPAREN'),
+        ('maximum', 'LPAREN', 'RPAREN'),
         ('left', 'POWER'),
         ('left', 'IMAG'),
         ('right', 'UMINUS'),

@@ -238,7 +238,7 @@ class CoreParser:
             # Handling left prec
             side, *operators = prec
 
-            if side == 'left':
+            if side in ('left', 'maximum'):
                 continue
 
             for operator in operators:
@@ -260,10 +260,17 @@ class CoreParser:
         index = None
         match_rule = None
         operator_levels = []
+        previous_max = -1
 
         for prec_level, prec in enumerate(reversed(self.precedence)):
             side, *operators = prec
             with_prec = ''
+
+            if side == 'maximum':
+                operator = operators[0]
+                max_operator = operator
+                previous_max = literal.search(operator)
+                previous_max = -1 if previous_max is None else previous_max
 
             if side == 'right':
                 continue
@@ -272,7 +279,6 @@ class CoreParser:
 
             for operator in operators:
                 available_statements += [(prec_level, statement) for statement in BNF_GRAMAR_RULES if operator in statement and operator in literal]
-                operator_levels.append((prec_level, operator))
 
             operator_index = literal.index(operator)
 
@@ -281,6 +287,29 @@ class CoreParser:
 
                 if statement_index is None:
                     continue
+
+                literal_copy = LiteralBnfRule(literal.string)
+
+                offset = 0
+                while (statement_index is None or statement_index < previous_max) and max_operator not in statement:
+                    literal_copy = literal_copy.string
+
+                    if not literal_copy:
+                        break
+
+                    offset += 1
+                    literal_copy = LiteralBnfRule(' '.join(literal_copy.split(' ')[1:]))
+
+                    statement_index = literal_copy.search(statement)
+
+                    if statement_index is None:
+                        continue
+
+                    statement_index += offset
+
+                if statement_index is None:
+                    continue
+
 
                 if index is None or statement_index < index:
                     index = statement_index
@@ -293,6 +322,7 @@ class CoreParser:
         index = None
         previous_len = None
         possible_solution = -1
+        gliteral = literal
 
         for _statement in self._not_prec_rules:
             #FIXME: Need to search for the lower index
@@ -311,6 +341,7 @@ class CoreParser:
                 previous_len = len(_statement)
 
         left_prec = potential_prec
+        literal = gliteral
 
         if left_prec:
             left_idx = left_prec[1]
@@ -318,6 +349,9 @@ class CoreParser:
             pr = left_prec[-1]
             statement_return = RULES[str(left_stmt) + pr].returned_type
             statement_possible_solution = len([_ for _ in RULES if statement_return in LiteralBnfRule(_)])
+
+            if index is None:
+                return
 
             if left_idx < index or (statement_possible_solution > possible_solution and possible_solution <= 1):
                 statement, index, with_prec = left_prec
