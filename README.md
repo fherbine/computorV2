@@ -48,3 +48,4 @@ Todos:
     - [x] vars
     - [x] funcs
     - [x] draw
+    **BEWARE:** `draw` is not compatible w/MacOSX
