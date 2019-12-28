@@ -2,6 +2,8 @@ import queue
 import re
 import threading
 
+from kivy.utils import platform
+
 from controllers.lexer import BcLexer
 from controllers.parser import BcParser
 from controllers.polynomial_lexparse import PolyLexer
@@ -20,6 +22,10 @@ class GraphThread(threading.Thread):
             try:
                 formula = self.formula_queue.get_nowait()
             except queue.Empty:
+                continue
+
+            if platform == 'macosx':
+                print('Sorry you cannot use this command on %s' % platform)
                 continue
 
             reset_window()
