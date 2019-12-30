@@ -242,14 +242,14 @@ class BcParser(CoreParser):
             #Create a new function
             #XXX: Hack for arg
             arg = re.findall(
-                '^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)',
+                '^[ \t]*(?![iI])[a-zA-Z]+[ \t]*\([ \t]*(?![iI])[a-zA-Z]+[ \t]*\)',
                 self.parsed_str,
             )
 
             if not arg:
                 raise SyntaxError('Syntax error, cannot evaluate.')
 
-            arg = re.findall('\([a-zA-Z]+\)', arg[0])
+            arg = re.findall('\([ \t]*[a-zA-Z]+[ \t]*\)', arg[0])
 
             if not arg:
                 raise SyntaxError('Syntax error, cannot evaluate.')
@@ -375,12 +375,12 @@ class BcParser(CoreParser):
     def expr(self, parsed):
         #XXX: Hack for arg
         arg = re.findall(
-            '^(?![iI])[a-zA-Z]+\((?![iI])[a-zA-Z]+\)',
+            '^[ \t]*(?![iI])[a-zA-Z]+[ \t]*\([ \t]*(?![iI])[a-zA-Z]+[ \t]*\)',
             self.parsed_str,
         )
 
         if arg:
-            arg = re.findall('\([a-zA-Z]+\)', arg[0])
+            arg = re.findall('\([ \t]*[a-zA-Z]+[ \t]*\)', arg[0])
             if arg:
                 arg = re.findall('[a-zA-Z]+', arg[0])[0].upper()
 
