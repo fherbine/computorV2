@@ -24,8 +24,11 @@ def ft_power(n, p):
     if isinstance(n, MagicStr) or isinstance(p, MagicStr):
         return(MagicStr(f'{n}^{p}'))
 
-    if isinstance(p, Complex) or isinstance(n, Complex):
+    if isinstance(p, Complex):
         raise TypeError('Complex power is not handled.')
+
+    if p < 0:
+        raise ValueError('power must be positive integer.')
 
     for _ in range(p):
         total *= n
