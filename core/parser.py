@@ -1,4 +1,5 @@
 import copy
+import itertools
 import re
 from collections import namedtuple
 
@@ -347,13 +348,22 @@ class CoreParser:
             left_idx = left_prec[1]
             left_stmt = left_prec[0]
             pr = left_prec[-1]
+            left_operators = list(itertools.chain.from_iterable([op[1:] for op in reversed(self.precedence) if op[0] == 'left']))
+            previous_rule_kw = literal[left_idx-1]
             statement_return = RULES[str(left_stmt) + pr].returned_type
             statement_possible_solution = len([_ for _ in RULES if statement_return in LiteralBnfRule(_)])
 
             if index is None:
                 return
 
-            if left_idx < index or (statement_possible_solution > possible_solution and possible_solution <= 1):
+            if (
+                previous_rule_kw in left_operators
+                or left_idx < index
+                or (
+                    statement_possible_solution > possible_solution
+                    and possible_solution <= 1
+                )
+            ):
                 statement, index, with_prec = left_prec
 
         if index is None:
