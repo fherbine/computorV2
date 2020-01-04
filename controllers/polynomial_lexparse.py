@@ -4,7 +4,7 @@ from core.parser2 import CoreParser2, _
 from controllers.ft_math import ft_power, ft_abs
 
 class PolyLexer(CoreLexer2):
-    tokens = [ 'NUMBER', 'ADD', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN',
+    tokens = [ 'I', 'NUMBER', 'ADD', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN',
                'RPAREN', 'X', 'POWER' ]
 
 
