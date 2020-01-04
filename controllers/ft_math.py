@@ -109,6 +109,9 @@ class Complex:
         return f'({r} {separator} {i}i)'
 
     def __add__(self, number):
+        if isinstance(number, MagicStr):
+            return number.__radd__(self)
+
         r = self.r
         i = self.i
 
@@ -122,6 +125,9 @@ class Complex:
         return self.__add__(number)
 
     def __sub__(self, number):
+        if isinstance(number, MagicStr):
+            return number.__rsub__(self)
+
         r = self.r
         i = self.i
 
