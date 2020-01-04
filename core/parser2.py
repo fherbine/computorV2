@@ -299,6 +299,7 @@ class CoreParser2:
                 if index is None or (statement_index < index or statement_possible_solution > possible_solution) and statement_possible_solution > 1:
                     index = statement_index
                     match_rule = (statement, statement_index, with_prec)
+                    possible_solution = statement_possible_solution
 
             left_prec = potential_prec
 

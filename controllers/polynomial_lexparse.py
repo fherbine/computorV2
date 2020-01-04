@@ -285,32 +285,34 @@ class PolynomialInterpreter:
         return self.dispatch()
 
     def dispatch(self):
-        output = ''
-        reduced_form = self.reduced_form
+        return dispatch_reduced_form(self.reduced_form, self.var_name)
 
-        for degree, value in reduced_form.items():
-            formula = '' if not output else ' '
+def dispatch_reduced_form(reduced_form, var_name):
+    output = ''
 
-            if not value and (any(reduced_form.values()) or degree != 'X^0'):
-                continue
+    for degree, value in reduced_form.items():
+        formula = '' if not output else ' '
 
-            if value < 0:
-                formula += '- ' if output else '-'
-                value = ft_abs(value)
+        if not value and (any(reduced_form.values()) or degree != 'X^0'):
+            continue
+
+        if value < 0:
+            formula += '- ' if output else '-'
+            value = ft_abs(value)
+        else:
+            formula += '+ ' if output else ''
+
+        if degree == 'X^0':
+            formula += f'{value}'
+        else:
+            formula += str(ft_abs(value))
+
+            if degree == 'X^1':
+                formula += f' * {var_name}'
             else:
-                formula += '+ ' if output else ''
+                intdeg = degree.split('^')[-1]
+                formula += f' * {var_name}^{intdeg}'
 
-            if degree == 'X^0':
-                formula += f'{value}'
-            else:
-                formula += str(ft_abs(value))
+        output += formula
 
-                if degree == 'X^1':
-                    formula += f' * {self.var_name}'
-                else:
-                    intdeg = degree.split('^')[-1]
-                    formula += f' * {self.var_name}^{intdeg}'
-
-            output += formula
-
-        return f'{output}'
+    return f'{output}'

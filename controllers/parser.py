@@ -5,7 +5,7 @@ from core.parser import CoreParser, _
 from controllers.lexer import BcLexer
 from controllers.ft_math import *
 from controllers.utils import MagicStr, exit_bc, draw
-from controllers.polynomial_lexparse import PolynomialInterpreter
+from controllers.polynomial_lexparse import PolynomialInterpreter, dispatch_reduced_form
 from controllers.polynomials import PolyCalc
 
 
@@ -23,6 +23,13 @@ class Function:
         self.name = name
         self.args = args
         self._body = body
+
+    def __repr__(self):
+        return 'Function(name={name}, args={args}, body={body})'.format(
+            name=repr(self.name),
+            args=repr(self.args),
+            body=repr(self._body),
+        )
 
     def call(self, args):
         lexer = BcLexer()
@@ -169,6 +176,12 @@ class BcParser(CoreParser):
 
             if str(_tmp.args[0]) != str(unknown):
                 raise ValueError('Unknown numbers are not compatible.')
+
+        print(
+            dispatch_reduced_form(function.reduced_form, function.args[0]),
+            '=',
+            dispatch_reduced_form(_tmp.reduced_form, _tmp.args[0]),
+        )
 
         calc = PolyCalc()
         calc.simplify(function.reduced_form, _tmp.reduced_form)
