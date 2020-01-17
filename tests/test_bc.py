@@ -442,3 +442,33 @@ def test_sub_10():
 
 def test_ask_floordiv_operation():
     assert get_line_result('85 // 2 = ?') == 42
+
+#======================= Fixed ===============================================
+
+def test_wrong_assignation():
+    """Fixed in `8953556` >>> issue #1."""
+    assert get_line_result(' f(x) = 3 * x') == '3 * x'
+
+def test_complex_power():
+    """Fixed in `4466312` >>> issue #2."""
+    assert str(get_line_result('(2i)^2 = ?')) == '-4'
+
+def test_add_minus_operators_complex_funcs():
+    """Fixed in `26a7099` >>> issue #5."""
+    assert str(get_line_result('f(x) = i + x')) == 'i + x'
+
+def test_uminus_matrix_syntax_error():
+    """Fixed in `6001fa2` >>> issue #6."""
+    assert str(get_line_result('f(x) = [[1, 1 * -2]]')) == '[[1, -2]]'
+
+def test_quadratic_wrong_resolution():
+    """Fixed in `b797f46` >>> issue #7."""
+    res = bc_repl(
+        'f(x) = 1 - x + x^2',
+        'f(x) = x ?'
+    )
+    assert str(res) == TWO_SOLUTION_REAL + '-1.0\n1.0'
+
+def test_function_assignation_with_complex():
+    """Fixed in `c264890` >>> issue #8."""
+    assert str(get_line_result('f(x) = x + i')) == 'x + i'
