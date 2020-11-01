@@ -36,7 +36,7 @@ def bc_repl(*lines):
     parser.functions = {}
 
     for line in lines:
-        res = get_line_result(line, lexer=lexer, parser=parser)
+        res = get_line_result(line.strip(), lexer=lexer, parser=parser)
 
     return res
 

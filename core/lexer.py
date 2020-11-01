@@ -88,6 +88,7 @@ class CoreLexer:
         return handle_token
 
     def tokenize(self, text_buffer):
+        text_buffer = text_buffer.strip()
         return Tokenizer(self._regex_map, text_buffer, self.ignore, self)
 
     def error(self, token):
