@@ -246,11 +246,19 @@ class BcParser(CoreParser):
     def expr(self, parsed):
         if (
             str(parsed[0]).upper() in self.functions
-            and not isinstance(parsed.expr1, MagicStr)
+            and (not isinstance(parsed.expr1, MagicStr) or (
+                str(parsed.expr1).upper() in self.variables
+                and str(parsed.expr1).upper() != self.functions[str(parsed.expr0).upper()].args[0].upper()
+            ))
         ):
+            value = parsed[2]
+
+            if str(parsed.expr1).upper() in self.variables:
+                value = self.variables[str(parsed.expr1).upper()]
+
             #XXX: Do I have to support: `f(x) = ?` >> NO ?
             #Function already exists
-            return self.functions[str(parsed[0]).upper()].call([parsed[2]])
+            return self.functions[str(parsed[0]).upper()].call([value])
         else:
             #Create a new function
             #XXX: Hack for arg
