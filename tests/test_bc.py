@@ -472,3 +472,10 @@ def test_quadratic_wrong_resolution():
 def test_function_assignation_with_complex():
     """Fixed in `c264890` >>> issue #8."""
     assert str(get_line_result('f(x) = x + i')) == 'x + i'
+
+def test_formula_with_blankspaces():
+    res = bc_repl(
+        'a = 3',
+        '   a = 3',
+    )
+    assert str(res) == '3'
