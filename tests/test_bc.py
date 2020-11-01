@@ -479,3 +479,11 @@ def test_formula_with_blankspaces():
         '   a = 3',
     )
     assert str(res) == '3'
+
+def test_function_with_defined_var():
+    res = bc_repl(
+        'a = 3',
+        'f(x) = x',
+        'f(a) = ?',
+    )
+    assert str(res) == '3'
