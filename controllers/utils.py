@@ -1,34 +1,23 @@
 import os
 import sys
+PLATFORM = 'win' if os.name == 'nt' else 'unix'
 
 def fancy_hello():
     os.system('clear')
-    v2 = '''"
-        CCCCCCCCCCCCC                                                                                      tttt                                           VVVVVVVV           VVVVVVVV 222222222222222
-     CCC::::::::::::C                                                                                   ttt:::t                                           V::::::V           V::::::V2:::::::::::::::22
-   CC:::::::::::::::C                                                                                   t:::::t                                           V::::::V           V::::::V2::::::222222:::::2
-  C:::::CCCCCCCC::::C                                                                                   t:::::t                                           V::::::V           V::::::V2222222     2:::::2
- C:::::C       CCCCCC   ooooooooooo      mmmmmmm    mmmmmmm   ppppp   ppppppppp   uuuuuu    uuuuuuttttttt:::::ttttttt       ooooooooooo   rrrrr   rrrrrrrrrV:::::V           V:::::V             2:::::2
-C:::::C               oo:::::::::::oo  mm:::::::m  m:::::::mm p::::ppp:::::::::p  u::::u    u::::ut:::::::::::::::::t     oo:::::::::::oo r::::rrr:::::::::rV:::::V         V:::::V              2:::::2
-C:::::C              o:::::::::::::::om::::::::::mm::::::::::mp:::::::::::::::::p u::::u    u::::ut:::::::::::::::::t    o:::::::::::::::or:::::::::::::::::rV:::::V       V:::::V            2222::::2
-C:::::C              o:::::ooooo:::::om::::::::::::::::::::::mpp::::::ppppp::::::pu::::u    u::::utttttt:::::::tttttt    o:::::ooooo:::::orr::::::rrrrr::::::rV:::::V     V:::::V        22222::::::22
-C:::::C              o::::o     o::::om:::::mmm::::::mmm:::::m p:::::p     p:::::pu::::u    u::::u      t:::::t          o::::o     o::::o r:::::r     r:::::r V:::::V   V:::::V       22::::::::222
-C:::::C              o::::o     o::::om::::m   m::::m   m::::m p:::::p     p:::::pu::::u    u::::u      t:::::t          o::::o     o::::o r:::::r     rrrrrrr  V:::::V V:::::V       2:::::22222
-C:::::C              o::::o     o::::om::::m   m::::m   m::::m p:::::p     p:::::pu::::u    u::::u      t:::::t          o::::o     o::::o r:::::r               V:::::V:::::V       2:::::2
- C:::::C       CCCCCCo::::o     o::::om::::m   m::::m   m::::m p:::::p    p::::::pu:::::uuuu:::::u      t:::::t    tttttto::::o     o::::o r:::::r                V:::::::::V        2:::::2
-  C:::::CCCCCCCC::::Co:::::ooooo:::::om::::m   m::::m   m::::m p:::::ppppp:::::::pu:::::::::::::::uu    t::::::tttt:::::to:::::ooooo:::::o r:::::r                 V:::::::V         2:::::2       222222
-   CC:::::::::::::::Co:::::::::::::::om::::m   m::::m   m::::m p::::::::::::::::p  u:::::::::::::::u    tt::::::::::::::to:::::::::::::::o r:::::r                  V:::::V          2::::::2222222:::::2
-     CCC::::::::::::C oo:::::::::::oo m::::m   m::::m   m::::m p::::::::::::::pp    uu::::::::uu:::u      tt:::::::::::tt oo:::::::::::oo  r:::::r                   V:::V           2::::::::::::::::::2
-        CCCCCCCCCCCCC   ooooooooooo   mmmmmm   mmmmmm   mmmmmm p::::::pppppppp        uuuuuuuu  uuuu        ttttttttttt     ooooooooooo    rrrrrrr                    VVV            22222222222222222222
-                                                               p:::::p
-                                                               p:::::p
-                                                              p:::::::p
-                                                              p:::::::p
-                                                              p:::::::p
-                                                              ppppppppp
-"'''
-    os.system('echo %s | lolcat' % v2)
-    os.system('echo "by fherbine" | lolcat')
+    v2 = '''
+      ::::::::   ::::::::    :::   :::   :::::::::  :::    ::: ::::::::::: ::::::::  :::::::::  :::     :::  ::::::::
+    :+:    :+: :+:    :+:  :+:+: :+:+:  :+:    :+: :+:    :+:     :+:    :+:    :+: :+:    :+: :+:     :+: :+:    :+:
+   +:+        +:+    +:+ +:+ +:+:+ +:+ +:+    +:+ +:+    +:+     +:+    +:+    +:+ +:+    +:+ +:+     +:+       +:+
+  +#+        +#+    +:+ +#+  +:+  +#+ +#++:++#+  +#+    +:+     +#+    +#+    +:+ +#++:++#:  +#+     +:+     +#+
+ +#+        +#+    +#+ +#+       +#+ +#+        +#+    +#+     +#+    +#+    +#+ +#+    +#+  +#+   +#+    +#+
+#+#    #+# #+#    #+# #+#       #+# #+#        #+#    #+#     #+#    #+#    #+# #+#    #+#   #+#+#+#    #+#
+########   ########  ###       ### ###         ########      ###     ########  ###    ###     ###     ##########
+'''
+    if PLATFORM == 'unix':
+        os.system('echo "%s" | lolcat' % v2)
+        os.system('echo "by fherbine" | lolcat')
+    else:
+        print(v2, '\nby fherbine')
     print('\n\n')
 
 def draw(functions):
