@@ -248,7 +248,6 @@ class BcParser(CoreParser):
             str(parsed[0]).upper() in self.functions
             and (not isinstance(parsed.expr1, MagicStr) or (
                 str(parsed.expr1).upper() in self.variables
-                and str(parsed.expr1).upper() != self.functions[str(parsed.expr0).upper()].args[0].upper()
             ))
         ):
             value = parsed[2]
