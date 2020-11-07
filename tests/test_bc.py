@@ -487,3 +487,11 @@ def test_function_with_defined_var():
         'f(a) = ?',
     )
     assert str(res) == '3'
+
+def test_function_with_defined_var_2():
+    res = bc_repl(
+        'x = 3',
+        'f(x) = x',
+        'f(x) = ?',
+    )
+    assert str(res) == '3'
