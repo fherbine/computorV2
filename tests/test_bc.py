@@ -501,3 +501,17 @@ def test_function_with_defined_var_2():
 def test_get_unassigned_variable():
     with pytest.raises(ValueError):
         get_line_result('toto = ?')
+
+def test_get_matrix_func_value():
+    res = bc_repl(
+        'f(x) = x * [[4, 2]]',
+        'f(x) = ?',
+    )
+    assert str(res) == 'x * [4, 2]'
+
+def test_get_complex_func_value():
+    res = bc_repl(
+        'f(x) = x * i',
+        'f(a) = ?',
+    )
+    assert str(res) == 'a * i'

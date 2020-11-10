@@ -201,7 +201,7 @@ class BcParser(CoreParser):
 
         function = self.functions[parsed[0].name.upper()]
 
-        return function.body.replace(function.args[0], parsed.expr.args[0])
+        return str(function.body).replace(function.args[0], parsed.expr.args[0])
 
 
     @_('expr')
