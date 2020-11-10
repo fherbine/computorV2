@@ -507,7 +507,7 @@ def test_get_matrix_func_value():
         'f(x) = x * [[4, 2]]',
         'f(x) = ?',
     )
-    assert str(res) == 'x * [4, 2]'
+    assert str(res) == '[[4 * x, 2 * x]]'
 
 def test_get_complex_func_value():
     res = bc_repl(
@@ -515,3 +515,40 @@ def test_get_complex_func_value():
         'f(a) = ?',
     )
     assert str(res) == 'a * i'
+
+def test_complex_assignation():
+    res = bc_repl(
+        'f(a) = a',
+        'x = 2',
+        'f(x) = x',
+    )
+    assert str(res) == '1 * x'
+
+def test_matrix_func_assignation():
+    res = bc_repl(
+        'f(x) = x * [[4, 2]]',
+        'f(2) = ?',
+    )
+    assert str(res) == '[8, 4]'
+
+def test_matrix_times_complex():
+    with pytest.raises(ValueError):
+        res = bc_repl(
+            'f(x) = [[4, 2]] * i',
+            'f(2) = ?',
+        )
+
+def test_complex_times_matrix():
+    with pytest.raises(ValueError):
+        res = bc_repl(
+            'f(x) = i * [[4, 2]]',
+            'f(2) = ?',
+        )
+
+def test_complex_assignation_2():
+    res = bc_repl(
+        'f(a) = a',
+        'x = 2',
+        'f(x) = x * 2',
+    )
+    assert str(res) == '2 * x'

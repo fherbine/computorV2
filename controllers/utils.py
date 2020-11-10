@@ -1,5 +1,6 @@
 import os
 import sys
+
 PLATFORM = 'win' if os.name == 'nt' else 'unix'
 
 def fancy_hello():
@@ -75,11 +76,14 @@ class MagicStr:
         unknown = self.unknown
         return MagicStr(f'-{self.string}', unknown)
 
-    def _do_magic_operation(self, elem, op, reverse=False):
+    def _do_magic_operation(self, elem, op, name, reverse=False):
         unknown = self.unknown
 
         if isinstance(elem, MagicStr):
             unknown = self.unknown + elem.unknown
+
+        if type(elem).__name__ == 'Matrix':
+            return getattr(elem, name)(self)
 
         if not reverse:
             return MagicStr(f'{self.string} {op} {elem}', unknown)
@@ -88,38 +92,38 @@ class MagicStr:
 
     # normal operations (self operator object)
     def __add__(self, obj):
-        return self._do_magic_operation(obj, '+')
+        return self._do_magic_operation(obj, '+', '__add__')
 
     def __sub__(self, obj):
-        return self._do_magic_operation(obj, '-')
+        return self._do_magic_operation(obj, '-', '__sub__')
 
     def __mul__(self, obj):
-        return self._do_magic_operation(obj, '*')
+        return self._do_magic_operation(obj, '*', '__mul__')
 
     def __truediv__(self, obj):
-        return self._do_magic_operation(obj, '/')
+        return self._do_magic_operation(obj, '/', '__truediv__')
 
     def __floordiv__(self, obj):
-        return self._do_magic_operation(obj, '//')
+        return self._do_magic_operation(obj, '//', '__floordiv__')
 
     def __mod__(self, obj):
-        return self._do_magic_operation(obj, '%')
+        return self._do_magic_operation(obj, '%', '__mod__')
 
     #Reverse operations (object self, operator)
     def __radd__(self, obj):
-        return self._do_magic_operation(obj, '+', reverse=True)
+        return self._do_magic_operation(obj, '+', '__radd__', reverse=True)
 
     def __rsub__(self, obj):
-        return self._do_magic_operation(obj, '-', reverse=True)
+        return self._do_magic_operation(obj, '-', '__rsub__', reverse=True)
 
     def __rmul__(self, obj):
-        return self._do_magic_operation(obj, '*', reverse=True)
+        return self._do_magic_operation(obj, '*', '__rmul__', reverse=True)
 
     def __rtruediv__(self, obj):
-        return self._do_magic_operation(obj, '/', reverse=True)
+        return self._do_magic_operation(obj, '/', '__rtruediv__', reverse=True)
 
     def __rfloordiv__(self, obj):
-        return self._do_magic_operation(obj, '//', reverse=True)
+        return self._do_magic_operation(obj, '//', '__rfloordiv__', reverse=True)
 
     def __rmod__(self, obj):
-        return self._do_magic_operation(obj, '%', reverse=True)
+        return self._do_magic_operation(obj, '%', '__rmod__', reverse=True)

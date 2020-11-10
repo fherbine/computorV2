@@ -234,6 +234,19 @@ class BcParser(CoreParser):
             reassign = MagicStr(var[0])
             #XXX: Hack reassign variable
 
+            if re.match('^\s*[A-Za-z]+\s*\([A-Za-z]+\)\s*=.*', self.parsed_str):
+                #XXX: Hack to reassign function
+                arg = re.findall(r'\([A-Za-z]+\)', self.parsed_str)[0]
+                arg = re.findall(r'[A-Za-z]+', arg)
+                unkwown = re.findall(r'=.*', self.parsed_str)[0]
+                unkwown = re.findall(r'[A-Za-z]+', unkwown)
+
+                if [str(a) for a in arg] == [str(u) for u in unkwown]:
+                    func = Function(str(var[0]), arg, '')
+                    func.body = parsed[2]
+                    self.functions[str(var[0]).upper()] = func 
+                    return func.body
+
             if isinstance(parsed.expr1, MagicStr):
                 raise ValueError(
                     'Trying to assign undefined value to variable.'
@@ -255,7 +268,7 @@ class BcParser(CoreParser):
         ):
             value = parsed[2]
 
-            if str(parsed.expr1).upper() in self.variables:
+            if str(parsed.expr1).upper() in self.variables :
                 value = self.variables[str(parsed.expr1).upper()]
 
             #XXX: Do I have to support: `f(x) = ?` >> NO ?

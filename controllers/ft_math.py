@@ -152,6 +152,9 @@ class Complex:
         if isinstance(number, MagicStr):
             raise ValueError('Cannot multiplie Complex w/MagicStr')
 
+        if isinstance(number, Matrix):
+            raise ValueError('Cannot multiplie Complex w/Matrix')
+
         return Complex(self.r * number, self.i * number)
 
     def __rmul__(self, number):
@@ -168,6 +171,9 @@ class Complex:
                 / (ft_power(number.r, 2) + ft_power(number.i, 2))
             )
             return Complex(r, i)
+
+        if isinstance(number, Matrix):
+            raise ValueError('Cannot divide Complex w/Matrix')
 
         if isinstance(number, MagicStr):
             raise ValueError('Cannot divide Complex w/MagicStr')
@@ -319,6 +325,9 @@ Width of first Matrix should be equal to the height of the second one:
 
     def __mul__(self, elem):
 
+        if isinstance(elem, Complex):
+            raise ValueError('Cannot multiplie Complex w/Matrix')
+
         if not isinstance(elem, Matrix):
             return self._do_matrix_operation(elem, 'mul')
 
@@ -328,6 +337,9 @@ Width of first Matrix should be equal to the height of the second one:
         return self.__mul__(elem)
 
     def __truediv__(self, elem):
+        if isinstance(elem, Complex):
+            raise ValueError('Cannot divide Matrix w/Complex')
+
         return self._do_matrix_operation(elem, 'truediv')
 
     def __rtruediv__(self, elem):
