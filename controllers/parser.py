@@ -190,6 +190,9 @@ class BcParser(CoreParser):
 
     @_('expr ASSIGN QMARK')
     def get_statement(self, parsed):
+        if isinstance(parsed.expr, MagicStr):
+            raise ValueError('%s is not defined' % parsed[0])
+
         if not isinstance(parsed.expr, Function):
             return parsed.expr
 

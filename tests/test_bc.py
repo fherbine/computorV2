@@ -495,3 +495,9 @@ def test_function_with_defined_var_2():
         'f(x) = ?',
     )
     assert str(res) == '3'
+
+#======================= More Fixes ==========================================
+
+def test_get_unassigned_variable():
+    with pytest.raises(ValueError):
+        get_line_result('toto = ?')
