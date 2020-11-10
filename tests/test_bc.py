@@ -507,7 +507,7 @@ def test_get_matrix_func_value():
         'f(x) = x * [[4, 2]]',
         'f(x) = ?',
     )
-    assert str(res) == '[[4 * x, 2 * x]]'
+    assert str(res) == 'x * [[4, 2]]'
 
 def test_get_complex_func_value():
     res = bc_repl(

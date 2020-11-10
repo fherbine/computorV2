@@ -83,7 +83,7 @@ class MagicStr:
             unknown = self.unknown + elem.unknown
 
         if type(elem).__name__ == 'Matrix':
-            return getattr(elem, name)(self)
+            elem = elem.to_magic_str()
 
         if not reverse:
             return MagicStr(f'{self.string} {op} {elem}', unknown)
