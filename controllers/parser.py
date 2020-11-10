@@ -242,6 +242,7 @@ class BcParser(CoreParser):
                 unknown = re.findall(r'[A-Za-z]+', unknown)
 
                 unknown = list(set(unknown))
+                unknown = [u for u in unknown if not re.match(r'[iI].*', u)]
 
                 if [str(a) for a in arg] == [str(u) for u in unknown]:
                     func = Function(str(var[0]), arg, '')
