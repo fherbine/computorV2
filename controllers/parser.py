@@ -238,10 +238,12 @@ class BcParser(CoreParser):
                 #XXX: Hack to reassign function
                 arg = re.findall(r'\([A-Za-z]+\)', self.parsed_str)[0]
                 arg = re.findall(r'[A-Za-z]+', arg)
-                unkwown = re.findall(r'=.*', self.parsed_str)[0]
-                unkwown = re.findall(r'[A-Za-z]+', unkwown)
+                unknown = re.findall(r'=.*', self.parsed_str)[0]
+                unknown = re.findall(r'[A-Za-z]+', unknown)
 
-                if [str(a) for a in arg] == [str(u) for u in unkwown]:
+                unknown = list(set(unknown))
+
+                if [str(a) for a in arg] == [str(u) for u in unknown]:
                     func = Function(str(var[0]), arg, '')
                     func.body = parsed[2]
                     self.functions[str(var[0]).upper()] = func 

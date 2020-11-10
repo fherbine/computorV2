@@ -552,3 +552,11 @@ def test_complex_assignation_2():
         'f(x) = x * 2',
     )
     assert str(res) == '2 * x'
+
+def test_complex_assignation_3():
+    res = bc_repl(
+        'x = 4',
+        'f(x) = x + 2',
+        'f(x) = 2*(x + 3*(x - 4))',
+    )
+    assert str(res) == '2 * (x + 3 * (x - 4))'
