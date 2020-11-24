@@ -1,7 +1,7 @@
 Computer V2
 ===========
 
-Basically a reproduction of `bc`.
+A 42 project which is basically a reproduction of `bc`. Final grade **124/100**
 
 
 How to install
@@ -30,9 +30,9 @@ Todos:
     - [x] complex handling
     - [x] matrix handling
 - [x] Math lib
-- [ ] Documentation
 
 **Bonus**
+- [ ] Documentation
 - [x] Unittests
 - [x] Function curve display (Kivy)
 - [x] Added usual functions
